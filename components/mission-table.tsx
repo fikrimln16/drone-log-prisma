@@ -7,6 +7,7 @@ import Link from "next/link";
 import { ArrowDown, ArrowUp, FolderKanban, Search } from "lucide-react";
 
 import UploadCSV from "./upload-csv";
+import Navbar from "./navbar";
 
 type Mission = {
   mission_name: string;
@@ -122,27 +123,7 @@ export default function MissionTable() {
 
   return (
     <div className="min-h-screen bg-[#f5f7fb]">
-      {/* NAVBAR */}
-      <div className="fixed top-0 left-0 z-[999] flex min-h-[92px] w-full items-center border-b bg-white/90 px-4 py-4 backdrop-blur-md md:h-[92px] md:px-8 md:py-0">
-        {/* LEFT */}
-        <div className="flex items-center gap-4">
-          {/* LOGO */}
-          <div className="flex h-[52px] w-[52px] items-center justify-center rounded-2xl bg-blue-600 shadow-lg md:h-[58px] md:w-[58px]">
-            <FolderKanban className="h-6 w-6 text-white md:h-7 md:w-7" />
-          </div>
-
-          {/* TITLE */}
-          <div>
-            <h1 className="text-2xl font-bold md:text-4xl">
-              Mission Dashboard
-            </h1>
-
-            <p className="text-sm text-gray-500 md:text-lg">
-              Drone Flight Management
-            </p>
-          </div>
-        </div>
-      </div>
+      <Navbar title="Mission Dashboard" subtitle="Drone Flight Management" />
 
       {/* CONTENT */}
       <div className="space-y-6 px-4 pt-[140px] pb-8 md:px-6 xl:px-8">

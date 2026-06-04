@@ -21,6 +21,8 @@ import EditFlightModal from "./edit-flight-modal";
 
 import { toast } from "sonner";
 
+import Navbar from "./navbar";
+
 type Props = {
   mission: string;
 };
@@ -241,25 +243,7 @@ export default function MissionPage({ mission }: Props) {
 
   return (
     <div className="min-h-screen bg-[#f5f7fb]">
-      {/* NAVBAR */}
-      <div className="fixed top-0 left-0 z-[999] flex min-h-[92px] w-full flex-col gap-4 border-b bg-white/90 px-4 py-4 backdrop-blur-md md:h-[92px] md:flex-row md:items-center md:justify-between md:px-8 md:py-0">
-        {/* LEFT */}
-        <div className="flex items-start justify-between">
-          {/* LOGO */}
-          <div className="flex h-[52px] w-[52px] items-center justify-center rounded-2xl bg-blue-600 shadow-lg md:h-[58px] md:w-[58px]">
-            <Plane className="h-6 w-6 text-white md:h-7 md:w-7" />
-          </div>
-
-          {/* TITLE */}
-          <div>
-            <h1 className="text-2xl font-bold md:text-4xl">Flight Check</h1>
-
-            <p className="text-sm text-gray-500 md:text-lg">
-              UAV Flight Log Manager
-            </p>
-          </div>
-        </div>
-      </div>
+      <Navbar title="Flight Check" subtitle="UAV Flight Log Manager" />
 
       {/* CONTENT */}
       <div className="mx-auto w-full px-4 pt-[140px] pb-8 md:px-6 xl:max-w-[1600px] xl:px-8">
