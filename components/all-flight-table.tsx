@@ -32,6 +32,18 @@ export default function AllFlightsPage() {
 
   const [search, setSearch] = useState("");
 
+  const [startDate, setStartDate] = useState("");
+
+  const [endDate, setEndDate] = useState("");
+
+  const [selectedAma, setSelectedAma] = useState("");
+
+  const [selectedEstate, setSelectedEstate] = useState("");
+
+  const [selectedMission, setSelectedMission] = useState("");
+
+  const [selectedBattery, setSelectedBattery] = useState("");
+
   const [sortConfig, setSortConfig] = useState({
     key: "flight_date",
 
@@ -54,10 +66,79 @@ export default function AllFlightsPage() {
       });
   }, []);
 
+  // FILTER OPTIONS
+  // FILTER OPTIONS
+
+  // MISSION
+  const missionOptions = [...new Set(flights.map((item) => item.mission_name))];
+
+  // FILTERED BY MISSION
+  const filteredByMission = selectedMission
+    ? flights.filter((item) => item.mission_name === selectedMission)
+    : flights;
+
+  // AMA
+  const amaOptions = [...new Set(filteredByMission.map((item) => item.ama))];
+
+  // FILTERED BY AMA
+  const filteredByAma = selectedAma
+    ? filteredByMission.filter((item) => item.ama === selectedAma)
+    : filteredByMission;
+
+  // ESTATE
+  const estateOptions = [...new Set(filteredByAma.map((item) => item.estate))];
+
+  // FILTERED BY ESTATE
+  const filteredByEstate = selectedEstate
+    ? filteredByAma.filter((item) => item.estate === selectedEstate)
+    : filteredByAma;
+
+  // BATTERY
+  const batteryOptions = [
+    ...new Set(filteredByEstate.map((item) => item.battery_id)),
+  ];
+
   // SEARCH
-  const filteredFlights = flights.filter((item) =>
-    Object.values(item).join(" ").toLowerCase().includes(search.toLowerCase())
-  );
+  const filteredFlights = flights.filter((item) => {
+    const itemDate = new Date(item.flight_date);
+
+    // SEARCH
+    const validSearch =
+      !search ||
+      Object.values(item)
+        .join(" ")
+        .toLowerCase()
+        .includes(search.toLowerCase());
+
+    // DATE
+    const validStart = !startDate || itemDate >= new Date(startDate);
+
+    const validEnd = !endDate || itemDate <= new Date(endDate);
+
+    // AMA
+    const validAma = !selectedAma || item.ama === selectedAma;
+
+    // ESTATE
+    const validEstate = !selectedEstate || item.estate === selectedEstate;
+
+    // MISSION
+    const validMission =
+      !selectedMission || item.mission_name === selectedMission;
+
+    // BATTERY
+    const validBattery =
+      !selectedBattery || item.battery_id === selectedBattery;
+
+    return (
+      validSearch &&
+      validStart &&
+      validEnd &&
+      validAma &&
+      validEstate &&
+      validMission &&
+      validBattery
+    );
+  });
 
   // SORT
   const sortedFlights = [...filteredFlights].sort((a: any, b: any) => {
@@ -258,7 +339,183 @@ export default function AllFlightsPage() {
             <UploadCSV />
           </div>
         </div>
+        {/* FILTER */}
+        <div className="mb-6 rounded-[32px] border bg-white p-6 shadow-sm">
+          {/* SEARCH */}
+          <div className="mb-5">
+            <input
+              type="text"
+              placeholder="Search flight..."
+              value={search}
+              onChange={(e) => {
+                setSearch(e.target.value);
 
+                setCurrentPage(1);
+              }}
+              className="h-[54px] w-full rounded-2xl border bg-white px-5 outline-none"
+            />
+          </div>
+
+          {/* FILTER GRID */}
+          <div className="grid grid-cols-1 gap-4 md:grid-cols-2 xl:grid-cols-6">
+            {/* START DATE */}
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-gray-600">
+                Start Date
+              </label>
+
+              <input
+                type="date"
+                value={startDate}
+                onChange={(e) => setStartDate(e.target.value)}
+                className="h-[54px] w-full rounded-2xl border px-4 outline-none"
+              />
+            </div>
+
+            {/* END DATE */}
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-gray-600">
+                End Date
+              </label>
+
+              <input
+                type="date"
+                value={endDate}
+                onChange={(e) => setEndDate(e.target.value)}
+                className="h-[54px] w-full rounded-2xl border px-4 outline-none"
+              />
+            </div>
+
+            {/* MISSION */}
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-gray-600">
+                Mission
+              </label>
+
+              <select
+                value={selectedMission}
+                onChange={(e) => {
+                  setSelectedMission(e.target.value);
+
+                  // RESET CHILD
+                  setSelectedAma("");
+
+                  setSelectedEstate("");
+
+                  setSelectedBattery("");
+                }}
+                className="h-[54px] w-full rounded-2xl border px-4 outline-none"
+              >
+                <option value="">All Mission</option>
+
+                {missionOptions.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* AMA */}
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-gray-600">
+                AMA
+              </label>
+
+              <select
+                value={selectedAma}
+                onChange={(e) => {
+                  setSelectedAma(e.target.value);
+
+                  // RESET CHILD
+                  setSelectedEstate("");
+
+                  setSelectedBattery("");
+                }}
+                className="h-[54px] w-full rounded-2xl border px-4 outline-none"
+              >
+                <option value="">All AMA</option>
+
+                {amaOptions.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* ESTATE */}
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-gray-600">
+                Estate
+              </label>
+
+              <select
+                value={selectedEstate}
+                onChange={(e) => {
+                  setSelectedEstate(e.target.value);
+
+                  // RESET CHILD
+                  setSelectedBattery("");
+                }}
+                className="h-[54px] w-full rounded-2xl border px-4 outline-none"
+              >
+                <option value="">All Estate</option>
+
+                {estateOptions.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
+            </div>
+
+            {/* BATTERY */}
+            <div>
+              <label className="mb-2 block text-sm font-semibold text-gray-600">
+                Battery
+              </label>
+
+              <select
+                value={selectedBattery}
+                onChange={(e) => setSelectedBattery(e.target.value)}
+                className="h-[54px] w-full rounded-2xl border px-4 outline-none"
+              >
+                <option value="">All Battery</option>
+
+                {batteryOptions.map((item) => (
+                  <option key={item} value={item}>
+                    {item}
+                  </option>
+                ))}
+              </select>
+            </div>
+          </div>
+
+          {/* RESET */}
+          <div className="mt-5">
+            <button
+              onClick={() => {
+                setSearch("");
+
+                setStartDate("");
+
+                setEndDate("");
+
+                setSelectedAma("");
+
+                setSelectedEstate("");
+
+                setSelectedMission("");
+
+                setSelectedBattery("");
+              }}
+              className="rounded-2xl border bg-white px-5 py-3 font-medium transition hover:bg-gray-100"
+            >
+              Reset Filters
+            </button>
+          </div>
+        </div>
         {/* TABLE */}
         <div className="overflow-hidden rounded-3xl border bg-white shadow-sm">
           <div className="w-full overflow-x-auto">
