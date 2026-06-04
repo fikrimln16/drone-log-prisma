@@ -10,9 +10,13 @@ import EditFlightModal from "./edit-flight-modal";
 
 import DeleteFlightModal from "./delete-flight-modal";
 
-import { ArrowDown, ArrowLeft, ArrowUp } from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowUp, Download } from "lucide-react";
+
+import UploadCSV from "./upload-csv";
 
 import Link from "next/link";
+
+import ExportCSVModal from "./export-csv-modal";
 
 export default function AllFlightsPage() {
   const [flights, setFlights] = useState<any[]>([]);
@@ -35,6 +39,8 @@ export default function AllFlightsPage() {
   const [currentPage, setCurrentPage] = useState(1);
 
   const rowsPerPage = 10;
+
+  const [openExport, setOpenExport] = useState(false);
 
   // FETCH
   useEffect(() => {
@@ -92,6 +98,83 @@ export default function AllFlightsPage() {
     );
   }
 
+  function handleExportCSV() {
+    if (!flights.length) return;
+
+    const headers = [
+      "flight_date",
+      "ama",
+      "estate",
+      "flight_id",
+      "mission_name",
+      "battery_id",
+      "battery_id_2",
+      "battery_color",
+      "start_percent",
+      "end_percent",
+      "start_volt",
+      "end_volt",
+      "start_time",
+      "end_time",
+      "duration_min",
+      "notes",
+    ];
+
+    const csvRows = [
+      headers.join(","),
+
+      ...flights.map((item) =>
+        [
+          item.flight_date,
+          item.ama,
+          item.estate,
+          item.flight_id,
+          item.mission_name,
+          item.battery_id,
+          item.battery_id_2,
+          item.battery_color,
+          item.start_percent,
+          item.end_percent,
+          item.start_volt,
+          item.end_volt,
+          item.start_time,
+          item.end_time,
+          item.duration_min,
+          `"${item.notes || ""}"`,
+        ].join(",")
+      ),
+    ];
+
+    const csvContent = csvRows.join("\n");
+
+    const blob = new Blob([csvContent], {
+      type: "text/csv;charset=utf-8;",
+    });
+
+    const today = new Date();
+
+    const date =
+      today.getFullYear() +
+      "-" +
+      String(today.getMonth() + 1).padStart(2, "0") +
+      "-" +
+      String(today.getDate()).padStart(2, "0");
+
+    const fileName = `ALL_FLIGHTS_${date}.csv`;
+
+    const link = document.createElement("a");
+
+    const url = URL.createObjectURL(blob);
+
+    link.href = url;
+
+    link.download = fileName;
+
+    link.click();
+
+    URL.revokeObjectURL(url);
+  }
+
   return (
     <div className="min-h-screen bg-[#f5f7fb]">
       {/* NAVBAR */}
@@ -106,6 +189,7 @@ export default function AllFlightsPage() {
           <ArrowLeft className="h-4 w-4" />
           Back to Dashboard
         </Link>
+
         {/* HEADER */}
         <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           {/* SEARCH */}
@@ -121,13 +205,19 @@ export default function AllFlightsPage() {
             className="h-[54px] w-full rounded-2xl border bg-white px-5 outline-none md:max-w-[360px]"
           />
 
-          {/* INFO */}
-          <div className="text-sm text-gray-500">
-            Total{" "}
-            <span className="font-semibold text-black">
-              {sortedFlights.length}
-            </span>{" "}
-            flights
+          {/* ACTIONS */}
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            {/* EXPORT */}
+            <button
+              onClick={() => setOpenExport(true)}
+              className="flex h-[56px] items-center justify-center gap-3 rounded-2xl border bg-white px-6 font-semibold shadow-sm transition hover:border-blue-500 hover:bg-blue-50"
+            >
+              <Download className="h-5 w-5" />
+              Export CSV
+            </button>
+
+            {/* UPLOAD */}
+            <UploadCSV />
           </div>
         </div>
 
@@ -362,6 +452,12 @@ export default function AllFlightsPage() {
         onSuccess={(id) => {
           setFlights((prev) => prev.filter((item) => item.id !== id));
         }}
+      />
+
+      <ExportCSVModal
+        open={openExport}
+        flights={flights}
+        onClose={() => setOpenExport(false)}
       />
     </div>
   );
