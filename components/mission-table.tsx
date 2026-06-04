@@ -1,28 +1,26 @@
 "use client";
 
-import Link from "next/link";
-
 import { useEffect, useMemo, useState } from "react";
 
-import { ArrowDown, ArrowUp, Plane, Search } from "lucide-react";
+import Link from "next/link";
 
-import { Badge } from "@/components/ui/badge";
-
-import { Button } from "@/components/ui/button";
-
-import { Card, CardContent } from "@/components/ui/card";
+import { ArrowDown, ArrowUp, FolderKanban, Search } from "lucide-react";
 
 import UploadCSV from "./upload-csv";
 
 type Mission = {
   mission_name: string;
+
   total_flights: number;
+
   total_duration: number;
+
   avg_duration: number;
+
   last_flight: string;
 };
 
-type SortColumn =
+type SortKey =
   | "mission_name"
   | "last_flight"
   | "total_flights"
@@ -34,9 +32,10 @@ export default function MissionTable() {
 
   const [search, setSearch] = useState("");
 
-  const [sortBy, setSortBy] = useState<SortColumn>("last_flight");
+  // SORT
+  const [sortBy, setSortBy] = useState<SortKey>("last_flight");
 
-  const [sortOrder, setSortOrder] = useState<"asc" | "desc">("desc");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
 
   useEffect(() => {
     fetch("/api/missions")
@@ -49,29 +48,14 @@ export default function MissionTable() {
   }, []);
 
   // SORT
-  const handleSort = (column: SortColumn) => {
-    if (sortBy === column) {
-      setSortOrder((prev) => (prev === "asc" ? "desc" : "asc"));
+  const handleSort = (key: SortKey) => {
+    if (sortBy === key) {
+      setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
     } else {
-      setSortBy(column);
+      setSortBy(key);
 
-      setSortOrder("asc");
+      setSortDirection("asc");
     }
-  };
-
-  // SORT ICON
-  // DESC = UP
-  // ASC = DOWN
-  const renderSortIcon = (column: SortColumn) => {
-    if (sortBy !== column) {
-      return <ArrowDown className="h-4 w-4 opacity-30" />;
-    }
-
-    return sortOrder === "desc" ? (
-      <ArrowUp className="h-4 w-4 text-blue-600" />
-    ) : (
-      <ArrowDown className="h-4 w-4 text-blue-600" />
-    );
   };
 
   // FILTER + SORT
@@ -81,23 +65,49 @@ export default function MissionTable() {
     );
 
     filtered.sort((a, b) => {
-      const aValue = a[sortBy];
+      let valueA = a[sortBy];
 
-      const bValue = b[sortBy];
+      let valueB = b[sortBy];
 
-      // NUMBER
-      if (typeof aValue === "number" && typeof bValue === "number") {
-        return sortOrder === "asc" ? aValue - bValue : bValue - aValue;
+      // DATE
+      if (sortBy === "last_flight") {
+        valueA = new Date(valueA).getTime();
+
+        valueB = new Date(valueB).getTime();
       }
 
       // STRING
-      return sortOrder === "asc"
-        ? String(aValue).localeCompare(String(bValue))
-        : String(bValue).localeCompare(String(aValue));
+      if (typeof valueA === "string" && typeof valueB === "string") {
+        if (sortDirection === "asc") {
+          return valueA.localeCompare(valueB);
+        }
+
+        return valueB.localeCompare(valueA);
+      }
+
+      // NUMBER
+      if (sortDirection === "asc") {
+        return Number(valueA) - Number(valueB);
+      }
+
+      return Number(valueB) - Number(valueA);
     });
 
     return filtered;
-  }, [missions, search, sortBy, sortOrder]);
+  }, [missions, search, sortBy, sortDirection]);
+
+  // SORT ICON
+  const renderSortIcon = (key: SortKey) => {
+    if (sortBy !== key) {
+      return <ArrowDown className="h-4 w-4 text-gray-300" />;
+    }
+
+    return sortDirection === "asc" ? (
+      <ArrowDown className="h-4 w-4 text-blue-600" />
+    ) : (
+      <ArrowUp className="h-4 w-4 text-blue-600" />
+    );
+  };
 
   // STATS
   const totalFlights = missions.reduce(
@@ -110,234 +120,197 @@ export default function MissionTable() {
     0
   );
 
-  const avgDuration = Math.round(
-    missions.reduce((a, b) => a + Number(b.avg_duration), 0) /
-      (missions.length || 1)
-  );
-
   return (
     <div className="min-h-screen bg-[#f5f7fb]">
-      {/* FIXED NAVBAR */}
-      <div className="fixed top-0 left-0 z-[999] flex h-[92px] w-full items-center justify-between border-b bg-white/90 px-8 backdrop-blur-md">
+      {/* NAVBAR */}
+      <div className="fixed top-0 left-0 z-[999] flex min-h-[92px] w-full items-center border-b bg-white/90 px-4 py-4 backdrop-blur-md md:h-[92px] md:px-8 md:py-0">
         {/* LEFT */}
         <div className="flex items-center gap-4">
           {/* LOGO */}
-          <div className="flex h-[58px] w-[58px] items-center justify-center rounded-2xl bg-blue-600 shadow-lg">
-            <Plane className="h-7 w-7 text-white" />
+          <div className="flex h-[52px] w-[52px] items-center justify-center rounded-2xl bg-blue-600 shadow-lg md:h-[58px] md:w-[58px]">
+            <FolderKanban className="h-6 w-6 text-white md:h-7 md:w-7" />
           </div>
 
           {/* TITLE */}
           <div>
-            <h1 className="text-4xl font-bold">Flight Check</h1>
+            <h1 className="text-2xl font-bold md:text-4xl">
+              Mission Dashboard
+            </h1>
 
-            <p className="text-lg text-gray-500">UAV Flight Log Manager</p>
+            <p className="text-sm text-gray-500 md:text-lg">
+              Drone Flight Management
+            </p>
           </div>
         </div>
-
-        {/* RIGHT */}
-        <UploadCSV />
       </div>
 
       {/* CONTENT */}
-      <div className="space-y-8 px-8 pt-[125px] pb-10">
+      <div className="space-y-6 px-4 pt-[140px] pb-8 md:px-6 xl:px-8">
         {/* STATS */}
-        <div className="grid grid-cols-4 gap-6">
-          <StatsCard
-            title="MISSIONS"
-            value={missions.length}
-            subtitle="unique missions"
-          />
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-4">
+          <StatsCard title="TOTAL MISSIONS" value={missions.length} />
 
-          <StatsCard
-            title="TOTAL FLIGHTS"
-            value={totalFlights}
-            subtitle="all flights"
-          />
+          <StatsCard title="TOTAL FLIGHTS" value={totalFlights} />
 
-          <StatsCard
-            title="TOTAL DURATION"
-            value={`${totalDuration} min`}
-            subtitle="flight duration"
-          />
+          <StatsCard title="TOTAL DURATION" value={`${totalDuration} min`} />
 
           <StatsCard
             title="AVG DURATION"
-            value={`${avgDuration} min`}
-            subtitle="average flight"
+            value={`${Math.round(totalDuration / (totalFlights || 1))} min`}
           />
         </div>
 
+        {/* ACTION BAR */}
+        <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+          {/* SEARCH */}
+          <div className="relative w-full md:w-[420px]">
+            <Search className="absolute top-1/2 left-4 h-5 w-5 -translate-y-1/2 text-gray-400" />
+
+            <input
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+              placeholder="Search mission..."
+              className="h-[54px] w-full rounded-2xl border bg-white pl-12 text-sm transition outline-none focus:border-blue-500 md:text-base"
+            />
+          </div>
+
+          {/* UPLOAD */}
+          <div className="w-full md:w-auto">
+            <UploadCSV />
+          </div>
+        </div>
+
         {/* TABLE */}
-        <Card className="overflow-hidden rounded-[32px] border bg-white shadow-sm">
-          <CardContent className="p-0">
-            {/* SEARCH */}
-            <div className="flex items-center justify-between border-b px-8 py-6">
-              <div className="relative w-[420px]">
-                <Search className="absolute top-1/2 left-5 h-5 w-5 -translate-y-1/2 text-gray-400" />
+        <div className="overflow-hidden rounded-[32px] border bg-white shadow-sm">
+          <div className="w-full overflow-x-auto">
+            <table className="w-full min-w-[1100px]">
+              {/* HEAD */}
+              <thead className="border-b bg-gray-50">
+                <tr>
+                  {/* MISSION */}
+                  <th className="p-4 text-left md:p-6">
+                    <button
+                      onClick={() => handleSort("mission_name")}
+                      className="flex items-center gap-2 text-xs font-bold tracking-wide md:text-sm"
+                    >
+                      MISSION
+                      {renderSortIcon("mission_name")}
+                    </button>
+                  </th>
 
-                <input
-                  type="text"
-                  placeholder="Search missions..."
-                  value={search}
-                  onChange={(e) => setSearch(e.target.value)}
-                  className="h-[58px] w-full rounded-full border bg-gray-50 pr-5 pl-14 text-lg transition outline-none focus:border-blue-500"
-                />
-              </div>
+                  {/* LAST FLIGHT */}
+                  <th className="p-4 text-left md:p-6">
+                    <button
+                      onClick={() => handleSort("last_flight")}
+                      className="flex items-center gap-2 text-xs font-bold tracking-wide md:text-sm"
+                    >
+                      LAST FLIGHT
+                      {renderSortIcon("last_flight")}
+                    </button>
+                  </th>
 
-              <p className="text-lg text-gray-500">
-                {filteredMissions.length} mission
-              </p>
-            </div>
+                  {/* FLIGHTS */}
+                  <th className="p-4 text-left md:p-6">
+                    <button
+                      onClick={() => handleSort("total_flights")}
+                      className="flex items-center gap-2 text-xs font-bold tracking-wide md:text-sm"
+                    >
+                      FLIGHTS
+                      {renderSortIcon("total_flights")}
+                    </button>
+                  </th>
 
-            {/* TABLE CONTENT */}
-            <div className="overflow-x-auto">
-              <table className="w-full">
-                <thead className="border-b bg-gray-50">
-                  <tr>
+                  {/* TOTAL */}
+                  <th className="p-4 text-left md:p-6">
+                    <button
+                      onClick={() => handleSort("total_duration")}
+                      className="flex items-center gap-2 text-xs font-bold tracking-wide md:text-sm"
+                    >
+                      TOTAL DURATION
+                      {renderSortIcon("total_duration")}
+                    </button>
+                  </th>
+
+                  {/* AVG */}
+                  <th className="p-4 text-left md:p-6">
+                    <button
+                      onClick={() => handleSort("avg_duration")}
+                      className="flex items-center gap-2 text-xs font-bold tracking-wide md:text-sm"
+                    >
+                      AVG DURATION
+                      {renderSortIcon("avg_duration")}
+                    </button>
+                  </th>
+
+                  {/* ACTION */}
+                  <th className="p-4 text-right text-xs font-bold tracking-wide md:p-6 md:text-sm">
+                    ACTION
+                  </th>
+                </tr>
+              </thead>
+
+              {/* BODY */}
+              <tbody>
+                {filteredMissions.map((item) => (
+                  <tr
+                    key={item.mission_name}
+                    className="border-b transition hover:bg-gray-50"
+                  >
                     {/* MISSION */}
-                    <th className="px-8 py-5 text-left">
-                      <button
-                        onClick={() => handleSort("mission_name")}
-                        className="flex cursor-pointer items-center gap-2 text-sm font-bold tracking-wide transition hover:text-blue-600"
-                      >
-                        MISSION NAME
-                        {renderSortIcon("mission_name")}
-                      </button>
-                    </th>
+                    <td className="p-4 md:p-6">
+                      <span className="rounded-full bg-blue-100 px-4 py-1 text-xs font-semibold text-blue-700 md:text-sm">
+                        {item.mission_name}
+                      </span>
+                    </td>
 
-                    {/* LAST FLIGHT */}
-                    <th className="px-8 py-5 text-left">
-                      <button
-                        onClick={() => handleSort("last_flight")}
-                        className="flex cursor-pointer items-center gap-2 text-sm font-bold tracking-wide transition hover:text-blue-600"
-                      >
-                        LAST FLIGHT
-                        {renderSortIcon("last_flight")}
-                      </button>
-                    </th>
+                    {/* LAST */}
+                    <td className="p-4 text-sm md:p-6 md:text-lg">
+                      {new Date(item.last_flight).toLocaleDateString("id-ID")}
+                    </td>
 
                     {/* FLIGHTS */}
-                    <th className="px-8 py-5 text-left">
-                      <button
-                        onClick={() => handleSort("total_flights")}
-                        className="flex cursor-pointer items-center gap-2 text-sm font-bold tracking-wide transition hover:text-blue-600"
-                      >
-                        FLIGHTS
-                        {renderSortIcon("total_flights")}
-                      </button>
-                    </th>
+                    <td className="p-4 md:p-6">
+                      <span className="rounded-full bg-purple-100 px-4 py-1 text-xs text-purple-700 md:text-sm">
+                        {item.total_flights} flights
+                      </span>
+                    </td>
 
-                    {/* TOTAL DURATION */}
-                    <th className="px-8 py-5 text-left">
-                      <button
-                        onClick={() => handleSort("total_duration")}
-                        className="flex cursor-pointer items-center gap-2 text-sm font-bold tracking-wide transition hover:text-blue-600"
-                      >
-                        TOTAL DURATION
-                        {renderSortIcon("total_duration")}
-                      </button>
-                    </th>
+                    {/* TOTAL */}
+                    <td className="p-4 md:p-6">
+                      <span className="rounded-full bg-yellow-100 px-4 py-1 text-xs text-yellow-700 md:text-sm">
+                        {item.total_duration} min
+                      </span>
+                    </td>
 
                     {/* AVG */}
-                    <th className="px-8 py-5 text-left">
-                      <button
-                        onClick={() => handleSort("avg_duration")}
-                        className="flex cursor-pointer items-center gap-2 text-sm font-bold tracking-wide transition hover:text-blue-600"
-                      >
-                        AVG DURATION
-                        {renderSortIcon("avg_duration")}
-                      </button>
-                    </th>
+                    <td className="p-4 text-sm md:p-6 md:text-lg">
+                      {item.avg_duration} min
+                    </td>
 
                     {/* ACTION */}
-                    <th className="px-8 py-5 text-right text-sm font-bold tracking-wide">
-                      ACTION
-                    </th>
-                  </tr>
-                </thead>
-
-                <tbody>
-                  {filteredMissions.map((item) => (
-                    <tr
-                      key={item.mission_name}
-                      className="border-b transition hover:bg-gray-50"
-                    >
-                      {/* MISSION */}
-                      <td className="px-8 py-6">
-                        <div className="flex items-center gap-4">
-                          <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-orange-100">
-                            <Plane className="h-5 w-5 text-orange-500" />
-                          </div>
-
-                          <div>
-                            <p className="text-xl font-semibold text-blue-600">
-                              {item.mission_name}
-                            </p>
-                          </div>
-                        </div>
-                      </td>
-
-                      {/* LAST FLIGHT */}
-                      <td className="px-8 py-6 text-lg">
-                        {new Date(item.last_flight).toLocaleDateString(
-                          "id-ID",
-                          {
-                            day: "2-digit",
-                            month: "short",
-                            year: "numeric",
-                          }
-                        )}
-                      </td>
-
-                      {/* FLIGHTS */}
-                      <td className="px-8 py-6">
-                        <Badge
-                          variant="secondary"
-                          className="rounded-full px-4 py-1 text-sm"
-                        >
-                          {item.total_flights} flights
-                        </Badge>
-                      </td>
-
-                      {/* DURATION */}
-                      <td className="px-8 py-6">
-                        <Badge className="rounded-full bg-yellow-100 px-4 py-1 text-sm text-yellow-700 hover:bg-yellow-100">
-                          {item.total_duration} min
-                        </Badge>
-                      </td>
-
-                      {/* AVG */}
-                      <td className="px-8 py-6 text-lg">
-                        {item.avg_duration} min / flight
-                      </td>
-
-                      {/* ACTION */}
-                      <td className="px-8 py-6 text-right">
-                        <Link href={`/missions/${item.mission_name}`}>
-                          <Button className="h-[48px] rounded-2xl border bg-white px-6 text-black shadow-none hover:bg-gray-100">
-                            View →
-                          </Button>
-                        </Link>
-                      </td>
-                    </tr>
-                  ))}
-
-                  {/* EMPTY */}
-                  {filteredMissions.length === 0 && (
-                    <tr>
-                      <td
-                        colSpan={6}
-                        className="py-20 text-center text-gray-400"
+                    <td className="p-4 text-right md:p-6">
+                      <Link
+                        href={`/missions/${item.mission_name}`}
+                        className="inline-flex rounded-2xl border bg-white px-4 py-2 text-sm transition hover:bg-gray-100 md:px-5"
                       >
-                        No missions found
-                      </td>
-                    </tr>
-                  )}
-                </tbody>
-              </table>
-            </div>
-          </CardContent>
-        </Card>
+                        View
+                      </Link>
+                    </td>
+                  </tr>
+                ))}
+
+                {/* EMPTY */}
+                {filteredMissions.length === 0 && (
+                  <tr>
+                    <td colSpan={6} className="py-20 text-center text-gray-400">
+                      No missions found
+                    </td>
+                  </tr>
+                )}
+              </tbody>
+            </table>
+          </div>
+        </div>
       </div>
     </div>
   );
@@ -346,23 +319,18 @@ export default function MissionTable() {
 function StatsCard({
   title,
   value,
-  subtitle,
 }: {
   title: string;
+
   value: string | number;
-  subtitle: string;
 }) {
   return (
-    <Card className="rounded-[32px] border bg-white shadow-sm">
-      <CardContent className="p-8">
-        <p className="text-sm font-medium tracking-wide text-gray-500 uppercase">
-          {title}
-        </p>
+    <div className="rounded-[32px] border bg-white p-6 shadow-sm md:p-8">
+      <p className="text-xs font-medium tracking-wide text-gray-500 uppercase md:text-sm">
+        {title}
+      </p>
 
-        <h1 className="mt-5 text-5xl font-bold">{value}</h1>
-
-        <p className="mt-4 text-gray-500">{subtitle}</p>
-      </CardContent>
-    </Card>
+      <h1 className="mt-4 text-4xl font-bold md:mt-5 md:text-6xl">{value}</h1>
+    </div>
   );
 }

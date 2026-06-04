@@ -4,13 +4,7 @@ import { useEffect, useMemo, useState } from "react";
 
 import Link from "next/link";
 
-import {
-  ArrowDown,
-  ArrowLeft,
-  ArrowUp,
-  Plane,
-  Plus,
-} from "lucide-react";
+import { ArrowDown, ArrowLeft, ArrowUp, Plane, Plus } from "lucide-react";
 
 import FlightDetailModal from "./flight-detail-modal";
 
@@ -29,25 +23,17 @@ type SortKey =
   | "duration_min"
   | "notes";
 
-export default function MissionPage({
-  mission,
-}: Props) {
-  const [flights, setFlights] = useState<
-    any[]
-  >([]);
+export default function MissionPage({ mission }: Props) {
+  const [flights, setFlights] = useState<any[]>([]);
 
-  const [selectedFlight, setSelectedFlight] =
-    useState<any>(null);
+  const [selectedFlight, setSelectedFlight] = useState<any>(null);
 
-  const [openAdd, setOpenAdd] =
-    useState(false);
+  const [openAdd, setOpenAdd] = useState(false);
 
   // SORT
-  const [sortBy, setSortBy] =
-    useState<SortKey>("flight_date");
+  const [sortBy, setSortBy] = useState<SortKey>("flight_date");
 
-  const [sortDirection, setSortDirection] =
-    useState<"asc" | "desc">("desc");
+  const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
 
   useEffect(() => {
     fetch(`/api/missions/${mission}`)
@@ -60,11 +46,10 @@ export default function MissionPage({
   // SORT FUNCTION
   const handleSort = (key: SortKey) => {
     if (sortBy === key) {
-      setSortDirection((prev) =>
-        prev === "asc" ? "desc" : "asc"
-      );
+      setSortDirection((prev) => (prev === "asc" ? "desc" : "asc"));
     } else {
       setSortBy(key);
+
       setSortDirection("asc");
     }
   };
@@ -75,33 +60,23 @@ export default function MissionPage({
 
     copied.sort((a, b) => {
       let valueA = a[sortBy];
+
       let valueB = b[sortBy];
 
       // DATE
       if (sortBy === "flight_date") {
-        valueA = new Date(
-          valueA
-        ).getTime();
+        valueA = new Date(valueA).getTime();
 
-        valueB = new Date(
-          valueB
-        ).getTime();
+        valueB = new Date(valueB).getTime();
       }
 
       // STRING
-      if (
-        typeof valueA === "string" &&
-        typeof valueB === "string"
-      ) {
+      if (typeof valueA === "string" && typeof valueB === "string") {
         if (sortDirection === "asc") {
-          return valueA.localeCompare(
-            valueB
-          );
+          return valueA.localeCompare(valueB);
         }
 
-        return valueB.localeCompare(
-          valueA
-        );
+        return valueB.localeCompare(valueA);
       }
 
       // NUMBER
@@ -116,26 +91,17 @@ export default function MissionPage({
   }, [flights, sortBy, sortDirection]);
 
   // STATS
-  const totalDuration =
-    flights.reduce(
-      (a, b) =>
-        a + Number(b.duration_min || 0),
-      0
-    );
-
-  const avgDuration = Math.round(
-    totalDuration /
-      (flights.length || 1)
+  const totalDuration = flights.reduce(
+    (a, b) => a + Number(b.duration_min || 0),
+    0
   );
 
+  const avgDuration = Math.round(totalDuration / (flights.length || 1));
+
   // SORT ICON
-  const renderSortIcon = (
-    key: SortKey
-  ) => {
+  const renderSortIcon = (key: SortKey) => {
     if (sortBy !== key) {
-      return (
-        <ArrowDown className="h-4 w-4 text-gray-300" />
-      );
+      return <ArrowDown className="h-4 w-4 text-gray-300" />;
     }
 
     return sortDirection === "asc" ? (
@@ -148,21 +114,19 @@ export default function MissionPage({
   return (
     <div className="min-h-screen bg-[#f5f7fb]">
       {/* NAVBAR */}
-      <div className="fixed top-0 left-0 z-[999] flex h-[92px] w-full items-center justify-between border-b bg-white/90 px-8 backdrop-blur-md">
+      <div className="fixed top-0 left-0 z-[999] flex min-h-[92px] w-full flex-col gap-4 border-b bg-white/90 px-4 py-4 backdrop-blur-md md:h-[92px] md:flex-row md:items-center md:justify-between md:px-8 md:py-0">
         {/* LEFT */}
         <div className="flex items-center gap-4">
           {/* LOGO */}
-          <div className="flex h-[58px] w-[58px] items-center justify-center rounded-2xl bg-blue-600 shadow-lg">
-            <Plane className="h-7 w-7 text-white" />
+          <div className="flex h-[52px] w-[52px] items-center justify-center rounded-2xl bg-blue-600 shadow-lg md:h-[58px] md:w-[58px]">
+            <Plane className="h-6 w-6 text-white md:h-7 md:w-7" />
           </div>
 
           {/* TITLE */}
           <div>
-            <h1 className="text-4xl font-bold">
-              Flight Check
-            </h1>
+            <h1 className="text-2xl font-bold md:text-4xl">Flight Check</h1>
 
-            <p className="text-lg text-gray-500">
+            <p className="text-sm text-gray-500 md:text-lg">
               UAV Flight Log Manager
             </p>
           </div>
@@ -170,9 +134,9 @@ export default function MissionPage({
       </div>
 
       {/* CONTENT */}
-      <div className="mx-auto w-[1600px] pt-[125px] pb-10">
+      <div className="mx-auto w-full px-4 pt-[140px] pb-8 md:px-6 xl:max-w-[1600px] xl:px-8">
         {/* HEADER */}
-        <div className="mb-10">
+        <div className="mb-8">
           <Link
             href="/"
             className="mb-5 inline-flex items-center gap-2 text-gray-500 transition hover:text-black"
@@ -182,24 +146,19 @@ export default function MissionPage({
           </Link>
 
           {/* TITLE + BUTTON */}
-          <div className="flex items-start justify-between">
+          <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
             <div>
-              <h1 className="text-6xl font-bold">
-                {mission}
-              </h1>
+              <h1 className="text-4xl font-bold md:text-6xl">{mission}</h1>
 
-              <p className="mt-3 text-xl text-gray-500">
-                {flights.length} flights
-                logged
+              <p className="mt-3 text-base text-gray-500 md:text-xl">
+                {flights.length} flights logged
               </p>
             </div>
 
             {/* ADD BUTTON */}
             <button
-              onClick={() =>
-                setOpenAdd(true)
-              }
-              className="flex items-center gap-3 rounded-2xl bg-black px-7 py-4 text-lg font-semibold text-white shadow-lg transition hover:scale-[1.02]"
+              onClick={() => setOpenAdd(true)}
+              className="flex w-full items-center justify-center gap-3 rounded-2xl bg-black px-6 py-4 text-base font-semibold text-white shadow-lg transition hover:scale-[1.02] md:w-auto md:text-lg"
             >
               <Plus className="h-5 w-5" />
               Add Flight
@@ -208,54 +167,37 @@ export default function MissionPage({
         </div>
 
         {/* STATS */}
-        <div className="mb-8 grid grid-cols-3 gap-6">
-          <StatsCard
-            title="TOTAL FLIGHTS"
-            value={flights.length}
-          />
+        <div className="mb-8 grid grid-cols-1 gap-4 md:grid-cols-3">
+          <StatsCard title="TOTAL FLIGHTS" value={flights.length} />
 
-          <StatsCard
-            title="TOTAL DURATION"
-            value={`${totalDuration} min`}
-          />
+          <StatsCard title="TOTAL DURATION" value={`${totalDuration} min`} />
 
-          <StatsCard
-            title="AVG DURATION"
-            value={`${avgDuration} min`}
-          />
+          <StatsCard title="AVG DURATION" value={`${avgDuration} min`} />
         </div>
 
         {/* TABLE */}
         <div className="overflow-hidden rounded-[32px] border bg-white shadow-sm">
-          <div className="overflow-auto">
-            <table className="w-full min-w-[1600px]">
+          <div className="w-full overflow-x-auto">
+            <table className="w-full min-w-[1200px]">
               {/* HEAD */}
               <thead className="border-b bg-gray-50">
                 <tr>
                   {/* DATE */}
-                  <th className="p-6 text-left">
+                  <th className="p-4 text-left md:p-6">
                     <button
-                      onClick={() =>
-                        handleSort(
-                          "flight_date"
-                        )
-                      }
-                      className="flex cursor-pointer items-center gap-2 text-sm font-bold tracking-wide"
+                      onClick={() => handleSort("flight_date")}
+                      className="flex cursor-pointer items-center gap-2 text-xs font-bold tracking-wide md:text-sm"
                     >
                       DATE
-                      {renderSortIcon(
-                        "flight_date"
-                      )}
+                      {renderSortIcon("flight_date")}
                     </button>
                   </th>
 
                   {/* AMA */}
-                  <th className="p-6 text-left">
+                  <th className="p-4 text-left md:p-6">
                     <button
-                      onClick={() =>
-                        handleSort("ama")
-                      }
-                      className="flex cursor-pointer items-center gap-2 text-sm font-bold tracking-wide"
+                      onClick={() => handleSort("ama")}
+                      className="flex cursor-pointer items-center gap-2 text-xs font-bold tracking-wide md:text-sm"
                     >
                       AMA
                       {renderSortIcon("ama")}
@@ -263,90 +205,62 @@ export default function MissionPage({
                   </th>
 
                   {/* ESTATE */}
-                  <th className="p-6 text-left">
+                  <th className="p-4 text-left md:p-6">
                     <button
-                      onClick={() =>
-                        handleSort(
-                          "estate"
-                        )
-                      }
-                      className="flex cursor-pointer items-center gap-2 text-sm font-bold tracking-wide"
+                      onClick={() => handleSort("estate")}
+                      className="flex cursor-pointer items-center gap-2 text-xs font-bold tracking-wide md:text-sm"
                     >
                       ESTATE
-                      {renderSortIcon(
-                        "estate"
-                      )}
+                      {renderSortIcon("estate")}
                     </button>
                   </th>
 
                   {/* FLIGHT ID */}
-                  <th className="p-6 text-left">
+                  <th className="p-4 text-left md:p-6">
                     <button
-                      onClick={() =>
-                        handleSort(
-                          "flight_id"
-                        )
-                      }
-                      className="flex cursor-pointer items-center gap-2 text-sm font-bold tracking-wide"
+                      onClick={() => handleSort("flight_id")}
+                      className="flex cursor-pointer items-center gap-2 text-xs font-bold tracking-wide md:text-sm"
                     >
                       FLIGHT ID
-                      {renderSortIcon(
-                        "flight_id"
-                      )}
+                      {renderSortIcon("flight_id")}
                     </button>
                   </th>
 
                   {/* BATTERY */}
-                  <th className="p-6 text-left">
+                  <th className="p-4 text-left md:p-6">
                     <button
-                      onClick={() =>
-                        handleSort(
-                          "battery_id"
-                        )
-                      }
-                      className="flex cursor-pointer items-center gap-2 text-sm font-bold tracking-wide"
+                      onClick={() => handleSort("battery_id")}
+                      className="flex cursor-pointer items-center gap-2 text-xs font-bold tracking-wide md:text-sm"
                     >
                       BATTERY
-                      {renderSortIcon(
-                        "battery_id"
-                      )}
+                      {renderSortIcon("battery_id")}
                     </button>
                   </th>
 
                   {/* DURATION */}
-                  <th className="p-6 text-left">
+                  <th className="p-4 text-left md:p-6">
                     <button
-                      onClick={() =>
-                        handleSort(
-                          "duration_min"
-                        )
-                      }
-                      className="flex cursor-pointer items-center gap-2 text-sm font-bold tracking-wide"
+                      onClick={() => handleSort("duration_min")}
+                      className="flex cursor-pointer items-center gap-2 text-xs font-bold tracking-wide md:text-sm"
                     >
                       DURATION
-                      {renderSortIcon(
-                        "duration_min"
-                      )}
+                      {renderSortIcon("duration_min")}
                     </button>
                   </th>
 
                   {/* NOTES */}
-                  <th className="p-6 text-left">
+                  <th className="p-4 text-left md:p-6">
                     <button
-                      onClick={() =>
-                        handleSort("notes")
-                      }
-                      className="flex cursor-pointer items-center gap-2 text-sm font-bold tracking-wide"
+                      onClick={() => handleSort("notes")}
+                      className="flex cursor-pointer items-center gap-2 text-xs font-bold tracking-wide md:text-sm"
                     >
                       NOTES
-                      {renderSortIcon(
-                        "notes"
-                      )}
+                      {renderSortIcon("notes")}
                     </button>
                   </th>
 
                   {/* ACTION */}
-                  <th className="p-6 text-right text-sm font-bold tracking-wide">
+                  <th className="p-4 text-right text-xs font-bold tracking-wide md:p-6 md:text-sm">
                     ACTION
                   </th>
                 </tr>
@@ -360,62 +274,53 @@ export default function MissionPage({
                     className="border-b transition hover:bg-gray-50"
                   >
                     {/* DATE */}
-                    <td className="p-6 text-lg">
-                      {new Date(
-                        item.flight_date
-                      ).toLocaleDateString(
-                        "id-ID"
-                      )}
+                    <td className="p-4 text-sm md:p-6 md:text-lg">
+                      {new Date(item.flight_date).toLocaleDateString("id-ID")}
                     </td>
 
                     {/* AMA */}
-                    <td className="p-6">
-                      <span className="rounded-full bg-purple-100 px-4 py-1 text-sm text-purple-700">
+                    <td className="p-4 md:p-6">
+                      <span className="rounded-full bg-purple-100 px-3 py-1 text-xs text-purple-700 md:px-4 md:text-sm">
                         {item.ama}
                       </span>
                     </td>
 
                     {/* ESTATE */}
-                    <td className="p-6">
-                      <span className="rounded-full bg-green-100 px-4 py-1 text-sm text-green-700">
+                    <td className="p-4 md:p-6">
+                      <span className="rounded-full bg-green-100 px-3 py-1 text-xs text-green-700 md:px-4 md:text-sm">
                         {item.estate}
                       </span>
                     </td>
 
                     {/* FLIGHT ID */}
-                    <td className="p-6">
-                      <span className="rounded-full bg-blue-100 px-4 py-1 text-sm text-blue-700">
+                    <td className="p-4 md:p-6">
+                      <span className="rounded-full bg-blue-100 px-3 py-1 text-xs text-blue-700 md:px-4 md:text-sm">
                         {item.flight_id}
                       </span>
                     </td>
 
                     {/* BATTERY */}
-                    <td className="p-6 text-lg">
+                    <td className="p-4 text-sm md:p-6 md:text-lg">
                       {item.battery_id}
                     </td>
 
                     {/* DURATION */}
-                    <td className="p-6">
-                      <span className="rounded-full bg-yellow-100 px-4 py-1 text-sm text-yellow-700">
-                        {item.duration_min}{" "}
-                        min
+                    <td className="p-4 md:p-6">
+                      <span className="rounded-full bg-yellow-100 px-3 py-1 text-xs text-yellow-700 md:px-4 md:text-sm">
+                        {item.duration_min} min
                       </span>
                     </td>
 
                     {/* NOTES */}
-                    <td className="p-6 text-lg">
-                      {item.notes}
+                    <td className="max-w-[250px] p-4 text-sm md:p-6 md:text-lg">
+                      <p className="truncate">{item.notes}</p>
                     </td>
 
                     {/* ACTION */}
-                    <td className="p-6 text-right">
+                    <td className="p-4 text-right md:p-6">
                       <button
-                        onClick={() =>
-                          setSelectedFlight(
-                            item
-                          )
-                        }
-                        className="rounded-2xl border bg-white px-5 py-2 transition hover:bg-gray-100"
+                        onClick={() => setSelectedFlight(item)}
+                        className="rounded-2xl border bg-white px-4 py-2 text-sm transition hover:bg-gray-100 md:px-5"
                       >
                         Detail
                       </button>
@@ -424,13 +329,9 @@ export default function MissionPage({
                 ))}
 
                 {/* EMPTY */}
-                {sortedFlights.length ===
-                  0 && (
+                {sortedFlights.length === 0 && (
                   <tr>
-                    <td
-                      colSpan={8}
-                      className="py-20 text-center text-gray-400"
-                    >
+                    <td colSpan={8} className="py-20 text-center text-gray-400">
                       No flights found
                     </td>
                   </tr>
@@ -444,18 +345,14 @@ export default function MissionPage({
       {/* DETAIL MODAL */}
       <FlightDetailModal
         data={selectedFlight}
-        onClose={() =>
-          setSelectedFlight(null)
-        }
+        onClose={() => setSelectedFlight(null)}
       />
 
       {/* ADD MODAL */}
       <AddFlightModal
         mission={mission}
         open={openAdd}
-        onClose={() =>
-          setOpenAdd(false)
-        }
+        onClose={() => setOpenAdd(false)}
       />
     </div>
   );
@@ -469,14 +366,12 @@ function StatsCard({
   value: string | number;
 }) {
   return (
-    <div className="rounded-[32px] border bg-white p-8 shadow-sm">
-      <p className="text-sm font-medium tracking-wide text-gray-500 uppercase">
+    <div className="rounded-[32px] border bg-white p-6 shadow-sm md:p-8">
+      <p className="text-xs font-medium tracking-wide text-gray-500 uppercase md:text-sm">
         {title}
       </p>
 
-      <h1 className="mt-5 text-6xl font-bold">
-        {value}
-      </h1>
+      <h1 className="mt-4 text-4xl font-bold md:mt-5 md:text-6xl">{value}</h1>
     </div>
   );
 }
