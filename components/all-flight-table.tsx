@@ -303,42 +303,14 @@ export default function AllFlightsPage() {
       <div className="px-4 pt-[120px] pb-10 md:px-8">
         <Link
           href="/"
-          className="mb-6 inline-flex items-center gap-2 rounded-2xl border bg-white px-5 py-3 text-sm font-semibold shadow-sm transition hover:border-blue-500 hover:bg-blue-50"
+          className="inline-flex items-center gap-2 rounded-2xl border bg-white px-5 py-3 text-sm font-semibold shadow-sm transition hover:border-blue-500 hover:bg-blue-50"
         >
           <ArrowLeft className="h-4 w-4" />
           Back to Dashboard
         </Link>
 
         {/* HEADER */}
-        <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
-          {/* SEARCH */}
-          <input
-            type="text"
-            placeholder="Search flight..."
-            value={search}
-            onChange={(e) => {
-              setSearch(e.target.value);
-
-              setCurrentPage(1);
-            }}
-            className="h-[54px] w-full rounded-2xl border bg-white px-5 outline-none md:max-w-[360px]"
-          />
-
-          {/* ACTIONS */}
-          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
-            {/* EXPORT */}
-            <button
-              onClick={() => setOpenExport(true)}
-              className="flex h-[56px] items-center justify-center gap-3 rounded-2xl border bg-white px-6 font-semibold shadow-sm transition hover:border-blue-500 hover:bg-blue-50"
-            >
-              <Download className="h-5 w-5" />
-              Export CSV
-            </button>
-
-            {/* UPLOAD */}
-            <UploadCSV />
-          </div>
-        </div>
+        <div className="mb-6 flex flex-col gap-4 md:flex-row md:items-center md:justify-between"></div>
         {/* FILTER */}
         <div className="mb-6 rounded-[32px] border bg-white p-6 shadow-sm">
           {/* SEARCH */}
@@ -493,27 +465,46 @@ export default function AllFlightsPage() {
           </div>
 
           {/* RESET */}
-          <div className="mt-5">
-            <button
-              onClick={() => {
-                setSearch("");
+          {/* ACTION BUTTONS */}
+          <div className="mt-5 flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+            {/* LEFT */}
+            <div>
+              <button
+                onClick={() => {
+                  setSearch("");
 
-                setStartDate("");
+                  setStartDate("");
 
-                setEndDate("");
+                  setEndDate("");
 
-                setSelectedAma("");
+                  setSelectedAma("");
 
-                setSelectedEstate("");
+                  setSelectedEstate("");
 
-                setSelectedMission("");
+                  setSelectedMission("");
 
-                setSelectedBattery("");
-              }}
-              className="rounded-2xl border bg-white px-5 py-3 font-medium transition hover:bg-gray-100"
-            >
-              Reset Filters
-            </button>
+                  setSelectedBattery("");
+                }}
+                className="h-[54px] rounded-2xl border bg-white px-6 font-medium transition hover:bg-gray-100"
+              >
+                Reset Filters
+              </button>
+            </div>
+
+            {/* RIGHT */}
+            <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+              {/* EXPORT */}
+              <button
+                onClick={() => setOpenExport(true)}
+                className="flex h-[56px] items-center justify-center gap-3 rounded-2xl border bg-white px-6 font-semibold shadow-sm transition hover:border-blue-500 hover:bg-blue-50"
+              >
+                <Download className="h-5 w-5" />
+                Export CSV
+              </button>
+
+              {/* UPLOAD */}
+              <UploadCSV />
+            </div>
           </div>
         </div>
         {/* TABLE */}
