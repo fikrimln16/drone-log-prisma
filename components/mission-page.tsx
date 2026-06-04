@@ -10,6 +10,8 @@ import FlightDetailModal from "./flight-detail-modal";
 
 import AddFlightModal from "./add-flight-model";
 import DeleteFlightModal from "./delete-flight-modal";
+import EditFlightModal from "./edit-flight-modal";
+
 import { toast } from "sonner";
 
 type Props = {
@@ -39,6 +41,8 @@ export default function MissionPage({ mission }: Props) {
   const [deleteFlight, setDeleteFlight] = useState<any>(null);
 
   const [deleteLoading, setDeleteLoading] = useState(false);
+
+  const [editFlight, setEditFlight] = useState<any>(null);
 
   useEffect(() => {
     fetch(`/api/missions/${mission}`)
@@ -361,6 +365,14 @@ export default function MissionPage({ mission }: Props) {
                         Detail
                       </button>
 
+                      {/* EDIT */}
+                      <button
+                        onClick={() => setEditFlight(item)}
+                        className="rounded-2xl bg-blue-50 px-4 py-2 text-sm font-medium text-blue-600 transition hover:bg-blue-100 md:px-5"
+                      >
+                        Edit
+                      </button>
+
                       {/* DELETE */}
                       <button
                         onClick={() => setDeleteFlight(item)}
@@ -405,6 +417,17 @@ export default function MissionPage({ mission }: Props) {
         loading={deleteLoading}
         onClose={() => setDeleteFlight(null)}
         onDelete={handleDeleteFlight}
+      />
+
+      <EditFlightModal
+        open={!!editFlight}
+        data={editFlight}
+        onClose={() => setEditFlight(null)}
+        onSuccess={(updated) => {
+          setFlights((prev) =>
+            prev.map((item) => (item.id === updated.id ? updated : item))
+          );
+        }}
       />
     </div>
   );
