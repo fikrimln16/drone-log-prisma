@@ -4,7 +4,14 @@ import { useEffect, useMemo, useState } from "react";
 
 import Link from "next/link";
 
-import { ArrowDown, ArrowLeft, ArrowUp, Plane, Plus } from "lucide-react";
+import {
+  ArrowDown,
+  ArrowLeft,
+  ArrowUp,
+  Download,
+  Plane,
+  Plus,
+} from "lucide-react";
 
 import FlightDetailModal from "./flight-detail-modal";
 
@@ -151,12 +158,93 @@ export default function MissionPage({ mission }: Props) {
     }
   }
 
+  function handleExportCSV() {
+    if (!flights.length) return;
+
+    const headers = [
+      "flight_date",
+      "ama",
+      "estate",
+      "flight_id",
+      "mission_name",
+      "battery_id",
+      "battery_id_2",
+      "battery_color",
+      "start_percent",
+      "end_percent",
+      "start_volt",
+      "end_volt",
+      "start_time",
+      "end_time",
+      "duration_min",
+      "notes",
+    ];
+
+    const csvRows = [
+      headers.join(","),
+
+      ...flights.map((item) =>
+        [
+          item.flight_date,
+          item.ama,
+          item.estate,
+          item.flight_id,
+          item.mission_name,
+          item.battery_id,
+          item.battery_id_2,
+          item.battery_color,
+          item.start_percent,
+          item.end_percent,
+          item.start_volt,
+          item.end_volt,
+          item.start_time,
+          item.end_time,
+          item.duration_min,
+          `"${item.notes || ""}"`,
+        ].join(",")
+      ),
+    ];
+
+    const csvContent = csvRows.join("\n");
+
+    const blob = new Blob([csvContent], {
+      type: "text/csv;charset=utf-8;",
+    });
+
+    // FORMAT DATE
+    const today = new Date();
+
+    const date =
+      today.getFullYear() +
+      "-" +
+      String(today.getMonth() + 1).padStart(2, "0") +
+      "-" +
+      String(today.getDate()).padStart(2, "0");
+
+    // FILE NAME
+    const fileName = `${mission.toUpperCase()}_${date}.csv`;
+
+    const link = document.createElement("a");
+
+    const url = URL.createObjectURL(blob);
+
+    link.href = url;
+
+    link.download = fileName;
+
+    link.click();
+
+    URL.revokeObjectURL(url);
+
+    toast.success("CSV exported successfully");
+  }
+
   return (
     <div className="min-h-screen bg-[#f5f7fb]">
       {/* NAVBAR */}
       <div className="fixed top-0 left-0 z-[999] flex min-h-[92px] w-full flex-col gap-4 border-b bg-white/90 px-4 py-4 backdrop-blur-md md:h-[92px] md:flex-row md:items-center md:justify-between md:px-8 md:py-0">
         {/* LEFT */}
-        <div className="flex items-center gap-4">
+        <div className="flex items-start justify-between">
           {/* LOGO */}
           <div className="flex h-[52px] w-[52px] items-center justify-center rounded-2xl bg-blue-600 shadow-lg md:h-[58px] md:w-[58px]">
             <Plane className="h-6 w-6 text-white md:h-7 md:w-7" />
@@ -186,7 +274,7 @@ export default function MissionPage({ mission }: Props) {
           </Link>
 
           {/* TITLE + BUTTON */}
-          <div className="flex flex-col gap-5 md:flex-row md:items-start md:justify-between">
+          <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
             <div>
               <h1 className="text-4xl font-bold md:text-6xl">{mission}</h1>
 
@@ -195,14 +283,25 @@ export default function MissionPage({ mission }: Props) {
               </p>
             </div>
 
-            {/* ADD BUTTON */}
-            <button
-              onClick={() => setOpenAdd(true)}
-              className="flex w-full items-center justify-center gap-3 rounded-2xl bg-black px-6 py-4 text-base font-semibold text-white shadow-lg transition hover:scale-[1.02] md:w-auto md:text-lg"
-            >
-              <Plus className="h-5 w-5" />
-              Add Flight
-            </button>
+            <div className="flex items-center gap-3">
+              {/* EXPORT CSV */}
+              <button
+                onClick={handleExportCSV}
+                className="flex h-[56px] items-center gap-3 rounded-2xl border bg-white px-6 font-semibold shadow-sm transition hover:bg-gray-100"
+              >
+                <Download className="h-5 w-5" />
+                Export CSV
+              </button>
+
+              {/* ADD FLIGHT */}
+              <button
+                onClick={() => setOpenAdd(true)}
+                className="flex h-[56px] items-center gap-3 rounded-2xl bg-black px-6 font-semibold text-white shadow-lg transition hover:scale-[1.02]"
+              >
+                <Plus className="h-5 w-5" />
+                Add Flight
+              </button>
+            </div>
           </div>
         </div>
 
