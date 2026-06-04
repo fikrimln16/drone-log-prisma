@@ -244,17 +244,16 @@ export default function MissionPage({ mission }: Props) {
   return (
     <div className="min-h-screen bg-[#f5f7fb]">
       <Navbar title="Flight Check" subtitle="UAV Flight Log Manager" />
-
       {/* CONTENT */}
       <div className="mx-auto w-full px-4 pt-[140px] pb-8 md:px-6 xl:max-w-[1600px] xl:px-8">
         {/* HEADER */}
         <div className="mb-8">
           <Link
             href="/"
-            className="mb-5 inline-flex items-center gap-2 text-gray-500 transition hover:text-black"
+            className="mb-6 inline-flex items-center gap-2 rounded-2xl border bg-white px-5 py-3 text-sm font-semibold shadow-sm transition hover:border-blue-500 hover:bg-blue-50"
           >
             <ArrowLeft className="h-4 w-4" />
-            Back
+            Back to Dashboard
           </Link>
 
           {/* TITLE + BUTTON */}

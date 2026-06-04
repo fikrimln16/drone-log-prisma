@@ -39,6 +39,11 @@ export default function MissionTable() {
 
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
 
+  // PAGINATION
+  const [currentPage, setCurrentPage] = useState(1);
+
+  const rowsPerPage = 10;
+
   useEffect(() => {
     fetch("/api/missions")
       .then((res) => res.json())
@@ -122,6 +127,15 @@ export default function MissionTable() {
     0
   );
 
+  // PAGINATION
+  const totalPages = Math.ceil(filteredMissions.length / rowsPerPage);
+
+  const startIndex = (currentPage - 1) * rowsPerPage;
+
+  const endIndex = startIndex + rowsPerPage;
+
+  const paginatedMissions = filteredMissions.slice(startIndex, endIndex);
+
   const chartData = [
     {
       date: "Mon",
@@ -183,7 +197,11 @@ export default function MissionTable() {
 
             <input
               value={search}
-              onChange={(e) => setSearch(e.target.value)}
+              onChange={(e) => {
+                setSearch(e.target.value);
+
+                setCurrentPage(1);
+              }}
               placeholder="Search mission..."
               className="h-[54px] w-full rounded-2xl border bg-white pl-12 text-sm transition outline-none focus:border-blue-500 md:text-base"
             />
@@ -275,7 +293,7 @@ export default function MissionTable() {
 
               {/* BODY */}
               <tbody>
-                {filteredMissions.map((item) => (
+                {paginatedMissions.map((item) => (
                   <tr
                     key={item.mission_name}
                     className="border-b transition hover:bg-gray-50"
@@ -324,7 +342,7 @@ export default function MissionTable() {
                 ))}
 
                 {/* EMPTY */}
-                {filteredMissions.length === 0 && (
+                {paginatedMissions.length === 0 && (
                   <tr>
                     <td colSpan={6} className="py-20 text-center text-gray-400">
                       No missions found
@@ -333,6 +351,67 @@ export default function MissionTable() {
                 )}
               </tbody>
             </table>
+            {/* PAGINATION */}
+            <div className="flex flex-col items-center justify-between gap-4 border-t bg-white px-6 py-5 md:flex-row">
+              {/* INFO */}
+              <p className="text-sm text-gray-500">
+                Showing{" "}
+                <span className="font-semibold text-black">
+                  {startIndex + 1}
+                </span>
+                –
+                <span className="font-semibold text-black">
+                  {Math.min(endIndex, filteredMissions.length)}
+                </span>{" "}
+                of{" "}
+                <span className="font-semibold text-black">
+                  {filteredMissions.length}
+                </span>{" "}
+                missions
+              </p>
+
+              {/* BUTTON */}
+              <div className="flex items-center gap-2">
+                {/* PREV */}
+                <button
+                  disabled={currentPage === 1}
+                  onClick={() => setCurrentPage((prev) => prev - 1)}
+                  className="rounded-xl border px-4 py-2 text-sm transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  Prev
+                </button>
+
+                {/* PAGE */}
+                {Array.from({
+                  length: totalPages,
+                }).map((_, index) => {
+                  const page = index + 1;
+
+                  return (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`h-10 w-10 rounded-xl text-sm font-semibold transition ${
+                        currentPage === page
+                          ? "bg-blue-600 text-white"
+                          : "border hover:bg-gray-100"
+                      } `}
+                    >
+                      {page}
+                    </button>
+                  );
+                })}
+
+                {/* NEXT */}
+                <button
+                  disabled={currentPage === totalPages}
+                  onClick={() => setCurrentPage((prev) => prev + 1)}
+                  className="rounded-xl border px-4 py-2 text-sm transition hover:bg-gray-100 disabled:cursor-not-allowed disabled:opacity-40"
+                >
+                  Next
+                </button>
+              </div>
+            </div>
           </div>
         </div>
       </div>

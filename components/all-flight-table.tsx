@@ -18,6 +18,8 @@ import Link from "next/link";
 
 import ExportCSVModal from "./export-csv-modal";
 
+import { toast } from "sonner";
+
 export default function AllFlightsPage() {
   const [flights, setFlights] = useState<any[]>([]);
 
@@ -26,6 +28,7 @@ export default function AllFlightsPage() {
   const [editFlight, setEditFlight] = useState<any>(null);
 
   const [deleteFlight, setDeleteFlight] = useState<any>(null);
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   const [search, setSearch] = useState("");
 
@@ -175,6 +178,41 @@ export default function AllFlightsPage() {
     URL.revokeObjectURL(url);
   }
 
+  async function handleDeleteFlight() {
+    if (!deleteFlight) return;
+
+    try {
+      setDeleteLoading(true);
+
+      // UX DELAY
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+
+      const res = await fetch(`/api/flights/${deleteFlight.id}`, {
+        method: "DELETE",
+      });
+
+      const result = await res.json();
+
+      if (!res.ok) {
+        throw new Error(result.message || "Delete failed");
+      }
+
+      // UPDATE TABLE
+      setFlights((prev) => prev.filter((item) => item.id !== deleteFlight.id));
+
+      // TOAST
+      toast.success("Flight deleted successfully");
+
+      // CLOSE MODAL
+      setDeleteFlight(null);
+    } catch (error: any) {
+      console.error(error);
+
+      toast.error(error.message || "Delete failed");
+    } finally {
+      setDeleteLoading(false);
+    }
+  }
   return (
     <div className="min-h-screen bg-[#f5f7fb]">
       {/* NAVBAR */}
@@ -346,7 +384,7 @@ export default function AllFlightsPage() {
                         {/* DELETE */}
                         <button
                           onClick={() => setDeleteFlight(item)}
-                          className="rounded-xl bg-red-50 px-4 py-2 text-sm text-red-600 transition hover:bg-red-100"
+                          className="rounded-2xl bg-red-50 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-100 md:px-5"
                         >
                           Delete
                         </button>
@@ -447,11 +485,11 @@ export default function AllFlightsPage() {
       />
 
       <DeleteFlightModal
-        data={deleteFlight}
+        open={!!deleteFlight}
+        flight={deleteFlight}
+        loading={deleteLoading}
         onClose={() => setDeleteFlight(null)}
-        onSuccess={(id) => {
-          setFlights((prev) => prev.filter((item) => item.id !== id));
-        }}
+        onDelete={handleDeleteFlight}
       />
 
       <ExportCSVModal
