@@ -2,7 +2,9 @@
 
 import { useMemo, useState } from "react";
 
-import { X } from "lucide-react";
+import { Loader2, X } from "lucide-react";
+
+import { toast } from "sonner";
 
 type Props = {
   mission: string;
@@ -14,11 +16,7 @@ type Errors = {
   [key: string]: string;
 };
 
-export default function AddFlightModal({
-  mission,
-  open,
-  onClose,
-}: Props) {
+export default function AddFlightModal({ mission, open, onClose }: Props) {
   const [loading, setLoading] = useState(false);
 
   const [form, setForm] = useState({
@@ -100,6 +98,9 @@ export default function AddFlightModal({
     try {
       setLoading(true);
 
+      // LOADING DELAY
+      await new Promise((resolve) => setTimeout(resolve, 800));
+
       const res = await fetch("/api/flights/add", {
         method: "POST",
 
@@ -115,18 +116,28 @@ export default function AddFlightModal({
 
       const result = await res.json();
 
+      // FAILED
       if (!res.ok) {
-        alert(result.message);
+        toast.error(result.message || "Failed add flight");
+
         return;
       }
 
-      alert("Flight berhasil ditambahkan");
+      // SUCCESS
+      toast.success("Flight added successfully");
 
-      window.location.reload();
+      // CLOSE MODAL
+      onClose();
+
+      // REFRESH TABLE
+      // DELAY AGAR TOAST TERLIHAT
+      setTimeout(() => {
+        window.location.reload();
+      }, 1200);
     } catch (err) {
       console.error(err);
 
-      alert("Terjadi kesalahan");
+      toast.error("Internal server error");
     } finally {
       setLoading(false);
     }
@@ -139,13 +150,9 @@ export default function AddFlightModal({
         {/* HEADER */}
         <div className="flex items-start justify-between border-b px-10 py-8">
           <div>
-            <h1 className="text-5xl font-bold">
-              New Flight Log
-            </h1>
+            <h1 className="text-5xl font-bold">New Flight Log</h1>
 
-            <p className="mt-3 text-lg text-gray-500">
-              Mission: {mission}
-            </p>
+            <p className="mt-3 text-lg text-gray-500">Mission: {mission}</p>
           </div>
 
           <button
@@ -369,23 +376,27 @@ export default function AddFlightModal({
 
         {/* FOOTER */}
         <div className="flex justify-end gap-4 border-t px-10 py-6">
-          <button
-            onClick={onClose}
-            className="rounded-2xl border px-6 py-3"
-          >
+          <button onClick={onClose} className="rounded-2xl border px-6 py-3">
             Cancel
           </button>
 
           <button
             disabled={!isValid || loading}
             onClick={handleSubmit}
-            className={`rounded-2xl px-7 py-3 font-semibold text-white transition ${
-              !isValid
+            className={`flex min-w-[180px] items-center justify-center gap-3 rounded-2xl px-7 py-3 font-semibold text-white transition ${
+              !isValid || loading
                 ? "cursor-not-allowed bg-gray-400"
                 : "bg-black hover:scale-[1.02]"
-            }`}
+            } `}
           >
-            {loading ? "Saving..." : "Save Flight"}
+            {loading ? (
+              <>
+                <Loader2 className="h-5 w-5 animate-spin" />
+                Saving...
+              </>
+            ) : (
+              "Save Flight"
+            )}
           </button>
         </div>
       </div>
@@ -393,10 +404,7 @@ export default function AddFlightModal({
   );
 }
 
-function Section({
-  title,
-  children,
-}: any) {
+function Section({ title, children }: any) {
   return (
     <div>
       <h2 className="mb-6 border-b pb-3 text-2xl font-bold tracking-wider text-blue-600 uppercase">
@@ -408,13 +416,7 @@ function Section({
   );
 }
 
-function Input({
-  label,
-  value,
-  onChange,
-  error,
-  type = "text",
-}: any) {
+function Input({ label, value, onChange, error, type = "text" }: any) {
   return (
     <div>
       <label className="mb-2 block text-sm font-bold tracking-wide text-gray-600 uppercase">
@@ -424,31 +426,18 @@ function Input({
       <input
         type={type}
         value={value}
-        onChange={(e) =>
-          onChange(e.target.value)
-        }
+        onChange={(e) => onChange(e.target.value)}
         className={`h-[64px] w-full rounded-2xl border bg-gray-50 px-5 text-lg outline-none ${
-          error
-            ? "border-red-500"
-            : "border-gray-200"
+          error ? "border-red-500" : "border-gray-200"
         }`}
       />
 
-      {error && (
-        <p className="mt-2 text-sm text-red-500">
-          {error}
-        </p>
-      )}
+      {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
     </div>
   );
 }
 
-function SelectInput({
-  label,
-  value,
-  onChange,
-  error,
-}: any) {
+function SelectInput({ label, value, onChange, error }: any) {
   return (
     <div>
       <label className="mb-2 block text-sm font-bold tracking-wide text-gray-600 uppercase">
@@ -457,43 +446,25 @@ function SelectInput({
 
       <select
         value={value}
-        onChange={(e) =>
-          onChange(e.target.value)
-        }
+        onChange={(e) => onChange(e.target.value)}
         className={`h-[64px] w-full rounded-2xl border bg-gray-50 px-5 text-lg outline-none ${
-          error
-            ? "border-red-500"
-            : "border-gray-200"
+          error ? "border-red-500" : "border-gray-200"
         }`}
       >
-        <option value="">
-          Select Color
-        </option>
+        <option value="">Select Color</option>
 
-        <option value="Black">
-          Black
-        </option>
+        <option value="Black">Black</option>
 
-        <option value="White">
-          White
-        </option>
+        <option value="White">White</option>
 
         <option value="Red">Red</option>
 
-        <option value="Blue">
-          Blue
-        </option>
+        <option value="Blue">Blue</option>
 
-        <option value="Green">
-          Green
-        </option>
+        <option value="Green">Green</option>
       </select>
 
-      {error && (
-        <p className="mt-2 text-sm text-red-500">
-          {error}
-        </p>
-      )}
+      {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
     </div>
   );
 }
