@@ -172,6 +172,9 @@ export default function MissionTable() {
           />
         </div>
 
+        <div className="mb-8">
+          <DashboardCharts />{" "}
+        </div>
         {/* ACTION BAR */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           {/* SEARCH */}
@@ -186,15 +189,20 @@ export default function MissionTable() {
             />
           </div>
 
-          {/* UPLOAD */}
-          <div className="w-full md:w-auto">
+          {/* ACTIONS */}
+          <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            {/* VIEW ALL */}
+            <Link href="/flights">
+              <button className="flex h-[56px] items-center justify-center rounded-2xl border bg-white px-6 font-semibold shadow-sm transition hover:border-blue-500 hover:bg-blue-50">
+                View All Flights
+              </button>
+            </Link>
+
+            {/* UPLOAD */}
             <UploadCSV />
           </div>
         </div>
 
-        <div className="mb-8">
-          <DashboardCharts />{" "}
-        </div>
         {/* TABLE */}
         {/* CHART */}
         <div className="overflow-hidden rounded-[32px] border bg-white shadow-sm">
