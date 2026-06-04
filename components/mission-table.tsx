@@ -8,6 +8,7 @@ import { ArrowDown, ArrowUp, FolderKanban, Search } from "lucide-react";
 
 import UploadCSV from "./upload-csv";
 import Navbar from "./navbar";
+import DashboardCharts from "./dashboard-charts";
 
 type Mission = {
   mission_name: string;
@@ -121,6 +122,36 @@ export default function MissionTable() {
     0
   );
 
+  const chartData = [
+    {
+      date: "Mon",
+      flights: 4,
+    },
+    {
+      date: "Tue",
+      flights: 7,
+    },
+    {
+      date: "Wed",
+      flights: 5,
+    },
+    {
+      date: "Thu",
+      flights: 9,
+    },
+    {
+      date: "Fri",
+      flights: 12,
+    },
+    {
+      date: "Sat",
+      flights: 8,
+    },
+    {
+      date: "Sun",
+      flights: 6,
+    },
+  ];
   return (
     <div className="min-h-screen bg-[#f5f7fb]">
       <Navbar title="Mission Dashboard" subtitle="Drone Flight Management" />
@@ -161,7 +192,11 @@ export default function MissionTable() {
           </div>
         </div>
 
+        <div className="mb-8">
+          <DashboardCharts />{" "}
+        </div>
         {/* TABLE */}
+        {/* CHART */}
         <div className="overflow-hidden rounded-[32px] border bg-white shadow-sm">
           <div className="w-full overflow-x-auto">
             <table className="w-full min-w-[1100px]">
