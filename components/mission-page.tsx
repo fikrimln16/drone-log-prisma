@@ -9,6 +9,8 @@ import { ArrowDown, ArrowLeft, ArrowUp, Plane, Plus } from "lucide-react";
 import FlightDetailModal from "./flight-detail-modal";
 
 import AddFlightModal from "./add-flight-model";
+import DeleteFlightModal from "./delete-flight-modal";
+import { toast } from "sonner";
 
 type Props = {
   mission: string;
@@ -34,6 +36,9 @@ export default function MissionPage({ mission }: Props) {
   const [sortBy, setSortBy] = useState<SortKey>("flight_date");
 
   const [sortDirection, setSortDirection] = useState<"asc" | "desc">("desc");
+  const [deleteFlight, setDeleteFlight] = useState<any>(null);
+
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
     fetch(`/api/missions/${mission}`)
@@ -110,6 +115,37 @@ export default function MissionPage({ mission }: Props) {
       <ArrowUp className="h-4 w-4 text-blue-600" />
     );
   };
+
+  // DELETE
+  async function handleDeleteFlight() {
+    if (!deleteFlight) return;
+
+    try {
+      setDeleteLoading(true);
+
+      // DELAY ANIMATION
+      await new Promise((resolve) => setTimeout(resolve, 800));
+
+      const res = await fetch(`/api/flights/${deleteFlight.id}`, {
+        method: "DELETE",
+      });
+
+      const result = await res.json();
+
+      toast.success(result.message);
+
+      // REFRESH TABLE
+      setFlights((prev) => prev.filter((x) => x.id !== deleteFlight.id));
+
+      setDeleteFlight(null);
+    } catch (err) {
+      console.error(err);
+
+      toast.error("Delete failed");
+    } finally {
+      setDeleteLoading(false);
+    }
+  }
 
   return (
     <div className="min-h-screen bg-[#f5f7fb]">
@@ -324,6 +360,14 @@ export default function MissionPage({ mission }: Props) {
                       >
                         Detail
                       </button>
+
+                      {/* DELETE */}
+                      <button
+                        onClick={() => setDeleteFlight(item)}
+                        className="rounded-2xl bg-red-50 px-4 py-2 text-sm font-medium text-red-600 transition hover:bg-red-100 md:px-5"
+                      >
+                        Delete
+                      </button>
                     </td>
                   </tr>
                 ))}
@@ -353,6 +397,14 @@ export default function MissionPage({ mission }: Props) {
         mission={mission}
         open={openAdd}
         onClose={() => setOpenAdd(false)}
+      />
+
+      <DeleteFlightModal
+        open={!!deleteFlight}
+        flight={deleteFlight}
+        loading={deleteLoading}
+        onClose={() => setDeleteFlight(null)}
+        onDelete={handleDeleteFlight}
       />
     </div>
   );
