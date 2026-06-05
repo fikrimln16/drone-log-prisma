@@ -92,7 +92,7 @@ export default function MissionTable({
                 onSort={onSort}
               />
 
-              <th className="p-6 text-right text-sm font-bold">ACTION</th>
+              <th className="p-4 text-right text-sm font-bold">ACTION</th>
             </tr>
           </thead>
 

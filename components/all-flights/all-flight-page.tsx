@@ -26,6 +26,8 @@ import EditFlightModal from "../flights/modals/edit-flight-modal";
 
 import DeleteFlightModal from "../flights/delete-flight-modal";
 
+import usePagination from "@/hooks/usePagination";
+
 export default function AllFlightsPage() {
   // FETCH
   const { flights, setFlights } = useFlights();
@@ -52,6 +54,10 @@ export default function AllFlightsPage() {
   const estateOptions = [...new Set(flights.map((item) => item.estate))];
 
   const batteryOptions = [...new Set(flights.map((item) => item.battery_id))];
+
+  // PAGINATION
+  const { paginatedData, currentPage, setCurrentPage, totalPages } =
+    usePagination(sort.sortedFlights, 5);
 
   const pilotOptions = [
     ...new Set(flights.map((item) => item.pilot).filter(Boolean)),
@@ -114,7 +120,7 @@ export default function AllFlightsPage() {
 
         {/* TABLE */}
         <FlightsTable
-          flights={sort.sortedFlights}
+          flights={paginatedData}
           sortBy={sort.sortBy}
           sortDirection={sort.sortDirection}
           onSort={sort.handleSort}
@@ -122,6 +128,56 @@ export default function AllFlightsPage() {
           onEdit={(item) => setEditFlight(item)}
           onDelete={(item) => setDeleteFlight(item)}
         />
+        {/* PAGINATION */}
+        <div className="flex items-center justify-between">
+          {/* INFO */}
+          <p className="text-sm text-gray-500">
+            Page <span className="font-semibold text-black">{currentPage}</span>{" "}
+            of <span className="font-semibold text-black">{totalPages}</span>
+          </p>
+
+          {/* BUTTON */}
+          <div className="flex items-center gap-2">
+            {/* PREVIOUS */}
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((prev) => prev - 1)}
+              className="rounded-xl border px-4 py-2 text-sm transition hover:bg-gray-100 disabled:opacity-40"
+            >
+              Previous
+            </button>
+
+            {/* PAGE NUMBER */}
+            {Array.from({
+              length: totalPages,
+            }).map((_, index) => {
+              const page = index + 1;
+
+              return (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`h-10 w-10 rounded-xl border text-sm font-medium transition ${
+                    currentPage === page
+                      ? "bg-black text-white"
+                      : "bg-white hover:bg-gray-100"
+                  } `}
+                >
+                  {page}
+                </button>
+              );
+            })}
+
+            {/* NEXT */}
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((prev) => prev + 1)}
+              className="rounded-xl border px-4 py-2 text-sm transition hover:bg-gray-100 disabled:opacity-40"
+            >
+              Next
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* EXPORT MODAL */}

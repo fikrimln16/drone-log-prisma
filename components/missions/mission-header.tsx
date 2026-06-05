@@ -45,7 +45,7 @@ export default function MissionHeader({
           {/* EXPORT */}
           <button
             onClick={onOpenExport}
-            className="flex h-[52px] items-center gap-3 rounded-2xl border bg-white px-5 font-semibold shadow-sm transition hover:bg-gray-100"
+            className="flex h-[48px] items-center gap-3 rounded-2xl border bg-white px-5 font-semibold shadow-sm transition hover:bg-gray-100"
           >
             <Download className="h-5 w-5" />
             Export CSV
@@ -54,7 +54,7 @@ export default function MissionHeader({
           {/* ADD */}
           <button
             onClick={onAdd}
-            className="flex h-[52px] items-center gap-3 rounded-2xl bg-black px-5 font-semibold text-white shadow-lg transition hover:scale-[1.02]"
+            className="flex h-[48px] items-center gap-3 rounded-2xl bg-black px-5 font-semibold text-white shadow-lg transition hover:scale-[1.02]"
           >
             <Plus className="h-5 w-5" />
             Add Flight

@@ -24,6 +24,8 @@ import useMissionSort from "@/hooks/useMissionSort";
 
 import MissionKpiGrid from "./kpi/mission-kpi-grid";
 
+import usePagination from "@/hooks/usePagination";
+
 type Props = {
   mission: string;
 };
@@ -47,13 +49,17 @@ export default function MissionPage({ mission }: Props) {
 
   const [editFlight, setEditFlight] = useState<any>(null);
 
+  // PAGINATION
+  const { paginatedData, currentPage, setCurrentPage, totalPages } =
+    usePagination(sortedFlights, 5);
+
   return (
-    <div className="min-h-screen bg-[#f5f7fb]">
+    <div className="h-screen bg-[#f5f7fb]">
       {/* NAVBAR */}
       <Navbar title="Flight Check" subtitle="UAV Flight Log Manager" />
 
       {/* CONTENT */}
-      <div className="mx-auto w-full px-4 pt-[140px] pb-8 md:px-6 xl:max-w-[1600px] xl:px-8">
+      <div className="mx-auto w-full px-4 pt-[105px] pb-4 md:px-6 xl:max-w-[1600px] xl:px-8">
         {/* HEADER */}
         <MissionHeader
           mission={mission}
@@ -67,7 +73,7 @@ export default function MissionPage({ mission }: Props) {
 
         {/* TABLE */}
         <MissionTable
-          flights={sortedFlights}
+          flights={paginatedData}
           sortBy={sortBy}
           sortDirection={sortDirection}
           onSort={handleSort}
@@ -75,6 +81,56 @@ export default function MissionPage({ mission }: Props) {
           onEdit={(item) => setEditFlight(item)}
           onDelete={(item) => setDeleteFlight(item)}
         />
+        {/* PAGINATION */}
+        <div className="mt-3 flex items-center justify-between">
+          {/* INFO */}
+          <p className="text-sm text-gray-500">
+            Page <span className="font-semibold text-black">{currentPage}</span>{" "}
+            of <span className="font-semibold text-black">{totalPages}</span>
+          </p>
+
+          {/* BUTTON */}
+          <div className="flex items-center gap-2">
+            {/* PREVIOUS */}
+            <button
+              disabled={currentPage === 1}
+              onClick={() => setCurrentPage((prev) => prev - 1)}
+              className="rounded-xl border px-4 py-2 text-sm transition hover:bg-gray-100 disabled:opacity-40"
+            >
+              Previous
+            </button>
+
+            {/* PAGE NUMBER */}
+            {Array.from({
+              length: totalPages,
+            }).map((_, index) => {
+              const page = index + 1;
+
+              return (
+                <button
+                  key={page}
+                  onClick={() => setCurrentPage(page)}
+                  className={`h-8 w-8 rounded-xl border text-sm font-medium transition ${
+                    currentPage === page
+                      ? "bg-black text-white"
+                      : "bg-white hover:bg-gray-100"
+                  } `}
+                >
+                  {page}
+                </button>
+              );
+            })}
+
+            {/* NEXT */}
+            <button
+              disabled={currentPage === totalPages}
+              onClick={() => setCurrentPage((prev) => prev + 1)}
+              className="rounded-xl border px-4 py-2 text-sm transition hover:bg-gray-100 disabled:opacity-40"
+            >
+              Next
+            </button>
+          </div>
+        </div>
       </div>
 
       {/* DETAIL */}
