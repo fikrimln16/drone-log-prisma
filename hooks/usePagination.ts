@@ -2,24 +2,27 @@
 
 import { useMemo, useState } from "react";
 
-export default function usePagination<T>(data: T[], rowsPerPage = 10) {
+export default function usePagination(data: any[], itemsPerPage: number = 5) {
   const [currentPage, setCurrentPage] = useState(1);
 
-  const totalPages = Math.ceil(data.length / rowsPerPage);
+  // TOTAL PAGE
+  const totalPages = Math.ceil(data.length / itemsPerPage);
 
+  // PAGINATED DATA
   const paginatedData = useMemo(() => {
-    const start = (currentPage - 1) * rowsPerPage;
+    const start = (currentPage - 1) * itemsPerPage;
 
-    return data.slice(start, start + rowsPerPage);
-  }, [currentPage, data, rowsPerPage]);
+    const end = start + itemsPerPage;
+
+    return data.slice(start, end);
+  }, [data, currentPage, itemsPerPage]);
 
   return {
-    currentPage,
+    paginatedData,
 
+    currentPage,
     setCurrentPage,
 
     totalPages,
-
-    paginatedData,
   };
 }

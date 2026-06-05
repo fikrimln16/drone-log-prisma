@@ -54,7 +54,7 @@ export default function MissionTable() {
 
   // PAGINATION
   const { paginatedData, currentPage, setCurrentPage, totalPages } =
-    usePagination(filteredMissions);
+    usePagination(filteredMissions, 5);
 
   return (
     <div className="min-h-screen bg-[#f5f7fb]">
@@ -133,6 +133,7 @@ export default function MissionTable() {
               </p>
 
               <div className="flex items-center gap-2">
+                {/* PREVIOUS */}
                 <button
                   disabled={currentPage === 1}
                   onClick={() => setCurrentPage((prev) => prev - 1)}
@@ -141,6 +142,28 @@ export default function MissionTable() {
                   Previous
                 </button>
 
+                {/* PAGE NUMBER */}
+                {Array.from({
+                  length: totalPages,
+                }).map((_, index) => {
+                  const page = index + 1;
+
+                  return (
+                    <button
+                      key={page}
+                      onClick={() => setCurrentPage(page)}
+                      className={`h-10 w-10 rounded-xl border text-sm font-medium transition ${
+                        currentPage === page
+                          ? "bg-black text-white"
+                          : "bg-white hover:bg-gray-100"
+                      } `}
+                    >
+                      {page}
+                    </button>
+                  );
+                })}
+
+                {/* NEXT */}
                 <button
                   disabled={currentPage === totalPages}
                   onClick={() => setCurrentPage((prev) => prev + 1)}
