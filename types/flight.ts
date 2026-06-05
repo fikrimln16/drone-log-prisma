@@ -5,6 +5,8 @@ export type FlightForm = {
 
   estate: string;
 
+  pilot: string;
+
   flight_id: string;
 
   mission_name?: string;

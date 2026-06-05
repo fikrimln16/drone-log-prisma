@@ -11,6 +11,8 @@ const defaultForm: FlightForm = {
 
   estate: "",
 
+  pilot: "",
+
   flight_id: "",
 
   mission_name: "",
@@ -52,6 +54,7 @@ export default function useFlightForm(initial?: Partial<FlightForm>) {
       form.flight_date &&
       form.ama &&
       form.estate &&
+      form.pilot &&
       form.flight_id &&
       form.mission_name &&
       form.battery_id &&

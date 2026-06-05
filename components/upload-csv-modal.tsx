@@ -15,6 +15,8 @@ type CSVRow = {
 
   estate: string;
 
+  pilot: string;
+
   flight_id: string;
 
   mission_name: string;
@@ -61,6 +63,7 @@ export default function UploadCSVModal({ open, onClose }: Props) {
       "flight_date",
       "ama",
       "estate",
+      "pilot",
       "flight_id",
       "mission_name",
       "battery_id",
@@ -80,6 +83,7 @@ export default function UploadCSVModal({ open, onClose }: Props) {
       "2026-06-01",
       "AMA01",
       "Estate Alpha",
+      "ICAPY",
       "FLY001",
       "THERMAL_SCAN",
       "BAT001",
@@ -170,6 +174,7 @@ export default function UploadCSVModal({ open, onClose }: Props) {
               "flight_date",
               "ama",
               "estate",
+              "pilot",
               "flight_id",
               "mission_name",
               "battery_id",

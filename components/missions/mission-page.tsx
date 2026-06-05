@@ -26,6 +26,8 @@ import useMissionStats from "@/hooks/useMissionStats";
 
 import useExportCSV from "@/hooks/useExportCSV";
 
+import MissionKpiGrid from "./kpi/mission-kpi-grid";
+
 type Props = {
   mission: string;
 };
@@ -69,11 +71,7 @@ export default function MissionPage({ mission }: Props) {
         />
 
         {/* KPI */}
-        <MissionKPI
-          totalFlights={totalFlights}
-          totalDuration={totalDuration}
-          avgDuration={avgDuration}
-        />
+        <MissionKpiGrid flights={flights} />
 
         {/* TABLE */}
         <MissionTable

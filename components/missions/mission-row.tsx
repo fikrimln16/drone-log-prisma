@@ -21,6 +21,13 @@ export default function MissionRow({
         {new Date(item.flight_date).toLocaleDateString("id-ID")}
       </td>
 
+      {/* FLIGHT */}
+      <td className="p-6">
+        <span className="rounded-full bg-blue-100 px-4 py-1 text-sm text-blue-700">
+          {item.flight_id}
+        </span>
+      </td>
+
       {/* AMA */}
       <td className="p-6">
         <span className="rounded-full bg-purple-100 px-4 py-1 text-sm text-purple-700">
@@ -35,15 +42,12 @@ export default function MissionRow({
         </span>
       </td>
 
-      {/* FLIGHT */}
+      {/* PILOT */}
       <td className="p-6">
-        <span className="rounded-full bg-blue-100 px-4 py-1 text-sm text-blue-700">
-          {item.flight_id}
+        <span className="rounded-full bg-cyan-100 px-4 py-1 text-sm text-cyan-700">
+          {item.pilot}
         </span>
       </td>
-
-      {/* BATTERY */}
-      <td className="p-6 text-lg">{item.battery_id}</td>
 
       {/* DURATION */}
       <td className="p-6">

@@ -4,138 +4,131 @@ import { X } from "lucide-react";
 
 type Props = {
   data: any;
+
   onClose: () => void;
 };
 
-export default function FlightDetailModal({
-  data,
-  onClose,
-}: Props) {
+export default function FlightDetailModal({ data, onClose }: Props) {
   if (!data) return null;
 
   return (
-    <div className="fixed inset-0 z-[999] flex items-center justify-center bg-black/40 backdrop-blur-sm">
-      {/* CARD */}
-      <div className="relative max-h-[90vh] w-[950px] overflow-y-auto rounded-3xl bg-white p-8 shadow-2xl">
-        {/* CLOSE */}
-        <button
-          onClick={onClose}
-          className="absolute top-5 right-5 flex h-10 w-10 items-center justify-center rounded-full border hover:bg-gray-100"
-        >
-          <X className="h-5 w-5" />
-        </button>
-
+    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm">
+      {/* MODAL */}
+      <div className="relative flex max-h-[92vh] w-full max-w-[1100px] flex-col overflow-hidden rounded-[32px] bg-white shadow-2xl">
         {/* HEADER */}
-        <div className="mb-8 border-b pb-6">
-          <p className="text-sm font-medium tracking-widest text-gray-400 uppercase">
+        <div className="border-b px-8 py-7">
+          <button
+            onClick={onClose}
+            className="absolute top-6 right-6 flex h-11 w-11 items-center justify-center rounded-full border transition hover:bg-gray-100"
+          >
+            <X className="h-5 w-5" />
+          </button>
+
+          <p className="text-xs font-semibold tracking-[0.3em] text-gray-400 uppercase">
             Flight Detail
           </p>
 
-          {/* TITLE */}
-          <h1 className="mt-3 text-5xl font-bold tracking-tight">
-            {data.flight_id}
-          </h1>
+          <div className="mt-3 flex items-end justify-between">
+            <div>
+              <h1 className="text-5xl font-bold tracking-tight">
+                {data.flight_id}
+              </h1>
 
-          <p className="mt-3 text-lg text-gray-500">
-            Complete drone flight information
-          </p>
+              <p className="mt-2 text-gray-500">
+                Complete drone flight information
+              </p>
+            </div>
+
+            <div className="rounded-2xl bg-blue-50 px-5 py-3">
+              <p className="text-xs font-semibold tracking-wide text-blue-500 uppercase">
+                Mission
+              </p>
+
+              <p className="mt-1 text-lg font-bold text-blue-700">
+                {data.mission_name}
+              </p>
+            </div>
+          </div>
         </div>
 
-        {/* GRID */}
-        <div className="grid grid-cols-2 gap-5">
-          {/* DATE */}
-          <Item
-            label="Flight Date"
-            value={
-              data.flight_date
-                ? new Date(
+        {/* CONTENT */}
+        <div className="flex-1 overflow-y-auto px-8 py-7">
+          <div className="space-y-8">
+            {/* FLIGHT INFO */}
+            <Section title="Flight Information">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                <Item
+                  label="Flight Date"
+                  value={
                     data.flight_date
-                  ).toLocaleDateString("id-ID")
-                : "-"
-            }
-          />
+                      ? new Date(data.flight_date).toLocaleDateString("id-ID")
+                      : "-"
+                  }
+                />
 
-          {/* MISSION */}
-          <Item
-            label="Mission Name"
-            value={data.mission_name}
-          />
+                <Item label="AMA" value={data.ama} />
 
-          {/* AMA */}
-          <Item label="AMA" value={data.ama} />
+                <Item label="Estate" value={data.estate} />
 
-          {/* ESTATE */}
-          <Item
-            label="Estate"
-            value={data.estate}
-          />
+                <Item label="Pilot" value={data.pilot} />
 
-          {/* BATTERY 1 */}
-          <Item
-            label="Battery ID"
-            value={data.battery_id}
-          />
+                <Item
+                  label="Flight Duration"
+                  value={`${data.duration_min || "-"} min`}
+                />
+              </div>
+            </Section>
 
-          {/* BATTERY 2 */}
-          <Item
-            label="Battery ID 2"
-            value={data.battery_id_2}
-          />
+            {/* BATTERY */}
+            <Section title="Battery Information">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                <Item label="Battery ID" value={data.battery_id} />
 
-          {/* COLOR */}
-          <Item
-            label="Battery Color"
-            value={data.battery_color}
-          />
+                <Item label="Battery ID 2" value={data.battery_id_2} />
 
-          {/* DURATION */}
-          <Item
-            label="Duration"
-            value={`${data.duration_min ?? "-"} min`}
-          />
+                <Item label="Battery Color" value={data.battery_color} />
 
-          {/* START % */}
-          <Item
-            label="Start Percent"
-            value={`${data.start_percent ?? "-"}%`}
-          />
+                <Item
+                  label="Start Percent"
+                  value={`${data.start_percent || "-"}%`}
+                  variant="green"
+                />
 
-          {/* END % */}
-          <Item
-            label="End Percent"
-            value={`${data.end_percent ?? "-"}%`}
-          />
+                <Item
+                  label="End Percent"
+                  value={`${data.end_percent || "-"}%`}
+                  variant={
+                    data.end_percent <= 20
+                      ? "red"
+                      : data.end_percent <= 50
+                        ? "yellow"
+                        : "green"
+                  }
+                />
 
-          {/* START VOLT */}
-          <Item
-            label="Start Volt"
-            value={`${data.start_volt ?? "-"}V`}
-          />
+                <Item label="Start Volt" value={`${data.start_volt || "-"}V`} />
 
-          {/* END VOLT */}
-          <Item
-            label="End Volt"
-            value={`${data.end_volt ?? "-"}V`}
-          />
+                <Item label="End Volt" value={`${data.end_volt || "-"}V`} />
+              </div>
+            </Section>
 
-          {/* START TIME */}
-          <Item
-            label="Start Time"
-            value={data.start_time}
-          />
+            {/* TIME */}
+            <Section title="Flight Time">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
+                <Item label="Start Time" value={data.start_time} />
 
-          {/* END TIME */}
-          <Item
-            label="End Time"
-            value={data.end_time}
-          />
+                <Item label="End Time" value={data.end_time} />
+              </div>
+            </Section>
 
-          {/* NOTES */}
-          <div className="col-span-2">
-            <Item
-              label="Notes"
-              value={data.notes}
-            />
+            {/* NOTES */}
+            <Section title="Notes">
+              <div className="rounded-2xl border bg-gray-50 p-6">
+                <p className="text-base leading-relaxed text-gray-700">
+                  {data.notes || "No additional notes"}
+                </p>
+              </div>
+            </Section>
           </div>
         </div>
       </div>
@@ -143,22 +136,59 @@ export default function FlightDetailModal({
   );
 }
 
+function Section({
+  title,
+  children,
+}: {
+  title: string;
+
+  children: React.ReactNode;
+}) {
+  return (
+    <div>
+      <div className="mb-4 flex items-center gap-3">
+        <div className="h-2 w-2 rounded-full bg-blue-500" />
+
+        <h2 className="text-sm font-bold tracking-[0.25em] text-gray-500 uppercase">
+          {title}
+        </h2>
+      </div>
+
+      {children}
+    </div>
+  );
+}
+
 function Item({
   label,
   value,
+  variant = "default",
 }: {
   label: string;
+
   value: any;
+
+  variant?: "default" | "green" | "yellow" | "red";
 }) {
+  const variantStyle = {
+    default: "bg-gray-50 text-black",
+
+    green: "bg-green-50 text-green-700",
+
+    yellow: "bg-yellow-50 text-yellow-700",
+
+    red: "bg-red-50 text-red-700",
+  };
+
   return (
-    <div className="rounded-2xl border bg-gray-50 p-5">
-      <p className="text-sm text-gray-500">
+    <div
+      className={`rounded-2xl border p-5 transition hover:shadow-sm ${variantStyle[variant]} `}
+    >
+      <p className="text-xs font-semibold tracking-wide text-gray-500 uppercase">
         {label}
       </p>
 
-      <p className="mt-2 text-2xl font-semibold break-words">
-        {value || "-"}
-      </p>
+      <p className="mt-3 text-xl font-bold break-words">{value || "-"}</p>
     </div>
   );
 }

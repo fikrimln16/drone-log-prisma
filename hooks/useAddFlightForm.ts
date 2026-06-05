@@ -17,6 +17,8 @@ const initialForm: FlightForm = {
 
   estate: "",
 
+  pilot: "",
+
   flight_id: "",
 
   battery_id: "",
@@ -54,6 +56,7 @@ export default function useAddFlightForm(mission: string, onClose: () => void) {
       form.flight_date &&
       form.ama &&
       form.estate &&
+      form.pilot &&
       form.flight_id &&
       form.battery_id &&
       form.battery_id_2 &&

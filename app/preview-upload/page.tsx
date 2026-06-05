@@ -10,6 +10,7 @@ type CSVRow = {
   flight_date: string;
   flight_id: string;
   mission_name: string;
+  pilot: string;
   battery_id: string;
   battery_color: string;
   start_percent: string;
@@ -152,6 +153,8 @@ export default function PreviewUploadPage() {
 
                   <th className="p-5 text-left">MISSION</th>
 
+                  <th className="p-5 text-left">PILOT</th>
+
                   <th className="p-5 text-left">BATTERY</th>
 
                   <th className="p-5 text-left">COLOR</th>
@@ -189,6 +192,10 @@ export default function PreviewUploadPage() {
 
                       <td className="p-5 font-semibold text-blue-600">
                         {item.mission_name}
+                      </td>
+
+                      <td className="p-5 font-semibold text-blue-600">
+                        {item.pilot}
                       </td>
 
                       <td className="p-5">{item.battery_id}</td>

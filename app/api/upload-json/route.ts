@@ -15,6 +15,7 @@ export async function POST(req: Request) {
           flight_date,
           ama,
           estate,
+          pilot,
           flight_id,
           mission_name,
           battery_id,
@@ -30,7 +31,7 @@ export async function POST(req: Request) {
           notes
         )
         VALUES (
-          ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
+          ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
         )
         `,
         [
@@ -39,6 +40,8 @@ export async function POST(req: Request) {
           item.ama,
 
           item.estate,
+
+          item.pilot,
 
           item.flight_id,
 

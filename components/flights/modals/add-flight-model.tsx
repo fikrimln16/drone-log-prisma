@@ -1,6 +1,6 @@
 "use client";
 
-import { Loader2, X } from "lucide-react";
+import { Loader2, Plus, X } from "lucide-react";
 
 import useAddFlightForm from "@/hooks/useAddFlightForm";
 
@@ -25,31 +25,52 @@ export default function AddFlightModal({ mission, open, onClose }: Props) {
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/40 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm">
       {/* MODAL */}
-      <div className="flex h-[90vh] w-[1100px] flex-col overflow-hidden rounded-[32px] bg-white shadow-2xl">
+      <div className="flex h-[92vh] w-full max-w-[1100px] flex-col overflow-hidden rounded-[32px] bg-white shadow-2xl">
         {/* HEADER */}
-        <div className="flex items-start justify-between border-b px-10 py-8">
-          <div>
-            <h1 className="text-5xl font-bold">New Flight Log</h1>
+        <div className="border-b px-8 py-6">
+          <div className="flex items-start justify-between">
+            <div className="flex items-start gap-5">
+              {/* ICON */}
+              <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-blue-100">
+                <Plus className="h-8 w-8 text-blue-600" />
+              </div>
 
-            <p className="mt-3 text-lg text-gray-500">Mission: {mission}</p>
+              {/* TITLE */}
+              <div>
+                <p className="text-xs font-semibold tracking-[0.3em] text-gray-400 uppercase">
+                  Flight Management
+                </p>
+
+                <h1 className="mt-2 text-4xl font-bold tracking-tight">
+                  New Flight Log
+                </h1>
+
+                <div className="mt-3 inline-flex rounded-full bg-blue-50 px-4 py-2">
+                  <span className="text-sm font-semibold text-blue-700">
+                    {mission}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            {/* CLOSE */}
+            <button
+              onClick={onClose}
+              className="flex h-11 w-11 items-center justify-center rounded-full border transition hover:bg-gray-100"
+            >
+              <X className="h-5 w-5" />
+            </button>
           </div>
-
-          <button
-            onClick={onClose}
-            className="flex h-14 w-14 items-center justify-center rounded-full border transition hover:bg-gray-100"
-          >
-            <X className="h-7 w-7" />
-          </button>
         </div>
 
         {/* BODY */}
-        <div className="flex-1 overflow-y-auto px-10 py-8">
-          <div className="space-y-10">
-            {/* FLIGHT INFO */}
+        <div className="flex-1 overflow-y-auto px-8 py-6">
+          <div className="space-y-7">
+            {/* FLIGHT */}
             <FlightFormSection title="Flight Information">
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
                 <FlightInput
                   label="Flight Date"
                   type="date"
@@ -100,6 +121,23 @@ export default function AddFlightModal({ mission, open, onClose }: Props) {
                 />
 
                 <FlightInput
+                  label="Pilot"
+                  value={form.pilot}
+                  error={errors.pilot}
+                  onChange={(value) =>
+                    setForm({
+                      ...form,
+                      pilot: value,
+                    })
+                  }
+                />
+              </div>
+            </FlightFormSection>
+
+            {/* BATTERY */}
+            <FlightFormSection title="Battery Information">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-2">
+                <FlightInput
                   label="Battery ID"
                   value={form.battery_id}
                   error={errors.battery_id}
@@ -134,12 +172,7 @@ export default function AddFlightModal({ mission, open, onClose }: Props) {
                     })
                   }
                 />
-              </div>
-            </FlightFormSection>
 
-            {/* BATTERY */}
-            <FlightFormSection title="Battery Information">
-              <div className="grid grid-cols-2 gap-6">
                 <FlightInput
                   label="Start Percent"
                   type="number"
@@ -196,7 +229,7 @@ export default function AddFlightModal({ mission, open, onClose }: Props) {
 
             {/* TIME */}
             <FlightFormSection title="Flight Time">
-              <div className="grid grid-cols-3 gap-6">
+              <div className="grid grid-cols-1 gap-4 md:grid-cols-3">
                 <FlightInput
                   label="Start Time"
                   type="time"
@@ -239,57 +272,62 @@ export default function AddFlightModal({ mission, open, onClose }: Props) {
             </FlightFormSection>
 
             {/* NOTES */}
-            <FlightFormSection title="Notes">
-              <div>
-                <label className="mb-2 block text-sm font-bold tracking-wide text-gray-600 uppercase">
-                  Additional Notes
-                </label>
-
-                <textarea
-                  value={form.notes}
-                  onChange={(e) =>
-                    setForm({
-                      ...form,
-                      notes: e.target.value,
-                    })
-                  }
-                  className="min-h-[160px] w-full rounded-2xl border border-gray-200 bg-gray-50 p-5 text-lg transition outline-none focus:border-blue-500"
-                  placeholder="Optional notes..."
-                />
-              </div>
+            <FlightFormSection title="Additional Notes">
+              <textarea
+                value={form.notes}
+                onChange={(e) =>
+                  setForm({
+                    ...form,
+                    notes: e.target.value,
+                  })
+                }
+                className="min-h-[120px] w-full rounded-2xl border border-gray-200 bg-gray-50 p-5 text-base transition outline-none focus:border-blue-500"
+                placeholder="Write additional notes..."
+              />
             </FlightFormSection>
           </div>
         </div>
 
         {/* FOOTER */}
-        <div className="flex justify-end gap-4 border-t px-10 py-6">
-          {/* CANCEL */}
-          <button
-            onClick={onClose}
-            className="rounded-2xl border px-6 py-3 font-medium transition hover:bg-gray-100"
-          >
-            Cancel
-          </button>
+        <div className="sticky bottom-0 flex items-center justify-between border-t bg-white px-8 py-5">
+          {/* INFO */}
+          <div>
+            <p className="text-sm text-gray-500">
+              Fill all required fields before saving
+            </p>
+          </div>
 
-          {/* SAVE */}
-          <button
-            disabled={!isValid || loading}
-            onClick={handleSubmit}
-            className={`flex min-w-[180px] items-center justify-center gap-3 rounded-2xl px-7 py-3 font-semibold text-white transition ${
-              !isValid || loading
-                ? "cursor-not-allowed bg-gray-400"
-                : "bg-black hover:scale-[1.02]"
-            }`}
-          >
-            {loading ? (
-              <>
-                <Loader2 className="h-5 w-5 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              "Save Flight"
-            )}
-          </button>
+          {/* ACTION */}
+          <div className="flex items-center gap-4">
+            <button
+              onClick={onClose}
+              className="rounded-2xl border px-6 py-3 font-medium transition hover:bg-gray-100"
+            >
+              Cancel
+            </button>
+
+            <button
+              disabled={!isValid || loading}
+              onClick={handleSubmit}
+              className={`flex min-w-[180px] items-center justify-center gap-3 rounded-2xl px-7 py-3 font-semibold text-white transition ${
+                !isValid || loading
+                  ? "cursor-not-allowed bg-gray-400"
+                  : "bg-black hover:scale-[1.02]"
+              }`}
+            >
+              {loading ? (
+                <>
+                  <Loader2 className="h-5 w-5 animate-spin" />
+                  Saving...
+                </>
+              ) : (
+                <>
+                  <Plus className="h-5 w-5" />
+                  Save Flight
+                </>
+              )}
+            </button>
+          </div>
         </div>
       </div>
     </div>

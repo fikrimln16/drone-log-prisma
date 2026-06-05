@@ -30,7 +30,7 @@ export default function MissionTable({
   onDelete,
 }: Props) {
   return (
-    <div className="overflow-hidden rounded-[32px] border bg-white shadow-sm">
+    <div className="mt-6 overflow-hidden rounded-[32px] border bg-white shadow-sm">
       <div className="w-full overflow-x-auto">
         <table className="w-full min-w-300">
           {/* HEAD */}
@@ -39,6 +39,14 @@ export default function MissionTable({
               <MissionSortHeader
                 label="DATE"
                 field="flight_date"
+                sortBy={sortBy}
+                sortDirection={sortDirection}
+                onSort={onSort}
+              />
+
+              <MissionSortHeader
+                label="FLIGHT ID"
+                field="flight_id"
                 sortBy={sortBy}
                 sortDirection={sortDirection}
                 onSort={onSort}
@@ -61,16 +69,8 @@ export default function MissionTable({
               />
 
               <MissionSortHeader
-                label="FLIGHT ID"
-                field="flight_id"
-                sortBy={sortBy}
-                sortDirection={sortDirection}
-                onSort={onSort}
-              />
-
-              <MissionSortHeader
-                label="BATTERY"
-                field="battery_id"
+                label="PILOT"
+                field="pilot"
                 sortBy={sortBy}
                 sortDirection={sortDirection}
                 onSort={onSort}

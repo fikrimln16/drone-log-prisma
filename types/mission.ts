@@ -7,6 +7,8 @@ export type Flight = {
 
   estate: string;
 
+  pilot: string;
+
   flight_id: string;
 
   mission_name: string;
@@ -38,6 +40,7 @@ export type SortKey =
   | "flight_date"
   | "ama"
   | "estate"
+  | "pilot"
   | "flight_id"
   | "battery_id"
   | "duration_min"

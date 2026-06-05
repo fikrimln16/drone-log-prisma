@@ -42,6 +42,8 @@ export default function EditFlightModal({
 
       estate: data.estate || "",
 
+      pilot: data.pilot || "",
+
       flight_id: data.flight_id || "",
 
       mission_name: data.mission_name || "",

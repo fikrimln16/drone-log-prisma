@@ -13,6 +13,8 @@ export async function POST(req: Request) {
 
       estate,
 
+      pilot,
+
       flight_id,
 
       mission_name,
@@ -45,6 +47,7 @@ export async function POST(req: Request) {
       !flight_date ||
       !ama ||
       !estate ||
+      !pilot ||
       !flight_id ||
       !mission_name ||
       !battery_id ||
@@ -76,6 +79,7 @@ export async function POST(req: Request) {
         flight_date,
         ama,
         estate,
+        pilot,
         flight_id,
         mission_name,
         battery_id,
@@ -91,7 +95,7 @@ export async function POST(req: Request) {
         notes
       )
       VALUES
-      (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+      (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
       `,
       [
         flight_date,
@@ -99,6 +103,8 @@ export async function POST(req: Request) {
         ama,
 
         estate,
+
+        pilot,
 
         flight_id,
 
