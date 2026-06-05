@@ -16,7 +16,7 @@ import UploadCSV from "./upload-csv";
 
 import Link from "next/link";
 
-import ExportCSVModal from "./export-csv-modal";
+import ExportCSVModal from "./export/export-csv-modal";
 
 import { toast } from "sonner";
 

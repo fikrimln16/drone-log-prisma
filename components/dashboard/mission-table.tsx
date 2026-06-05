@@ -1,5 +1,7 @@
 "use client";
 
+import Link from "next/link";
+
 import { useState } from "react";
 
 import Navbar from "../layout/navbar";
@@ -16,6 +18,9 @@ import DashboardKPI from "./dashboard-kpi";
 import DashboardOperation from "./dashboard-operation";
 
 import DashboardTable from "./dashboard-table";
+
+// ICONS
+import { List } from "lucide-react";
 
 // HOOKS
 import useDashboardData from "@/hooks/useDashboardData";
@@ -84,8 +89,27 @@ export default function MissionTable() {
             />
           </div>
 
-          {/* RIGHT */}
+          {/* RIGHT ACTION */}
           <div className="flex flex-col gap-3 sm:flex-row sm:items-center">
+            {/* ALL FLIGHTS */}
+            <Link
+              href="/flights"
+              className="flex h-[54px] items-center gap-3 rounded-2xl border bg-white px-5 shadow-sm transition hover:bg-gray-100"
+            >
+              {/* ICON */}
+              <div className="rounded-xl bg-blue-100 p-2">
+                <List className="h-4 w-4 text-blue-600" />
+              </div>
+
+              {/* TEXT */}
+              <div className="text-left">
+                <p className="text-sm font-semibold">All Flights</p>
+
+                <p className="text-xs text-gray-500">View all flight logs</p>
+              </div>
+            </Link>
+
+            {/* UPLOAD */}
             <UploadCSV />
           </div>
         </div>
@@ -100,6 +124,7 @@ export default function MissionTable() {
             of <span className="font-semibold text-black">{totalPages}</span>
           </p>
 
+          {/* BUTTON */}
           <div className="flex items-center gap-2">
             {/* PREV */}
             <button
