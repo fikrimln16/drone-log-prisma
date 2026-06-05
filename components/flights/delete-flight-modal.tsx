@@ -2,6 +2,10 @@
 
 import { Loader2, Trash2, X } from "lucide-react";
 
+import { useState } from "react";
+
+import { toast } from "sonner";
+
 type Props = {
   open: boolean;
 
@@ -9,9 +13,7 @@ type Props = {
 
   onClose: () => void;
 
-  onDelete: () => void;
-
-  loading?: boolean;
+  onDelete: (deletedId: number) => void;
 };
 
 export default function DeleteFlightModal({
@@ -19,56 +21,84 @@ export default function DeleteFlightModal({
   flight,
   onClose,
   onDelete,
-  loading,
 }: Props) {
+  const [loading, setLoading] = useState(false);
+
   if (!open || !flight) return null;
 
+  async function handleDelete() {
+    try {
+      setLoading(true);
+
+      const res = await fetch(`/api/flights/${flight.id}`, {
+        method: "DELETE",
+      });
+
+      // fake loading animation
+      await new Promise((resolve) => setTimeout(resolve, 1200));
+
+      if (!res.ok) {
+        throw new Error("Failed to delete flight");
+      }
+
+      toast.success("Flight deleted successfully");
+
+      onDelete(flight.id);
+    } catch (error) {
+      console.error(error);
+
+      toast.error("Failed to delete flight");
+    } finally {
+      setLoading(false);
+    }
+  }
+
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/50 p-4 backdrop-blur-sm">
-      <div className="w-full max-w-[520px] rounded-[32px] bg-white p-8 shadow-2xl">
+    <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/40 backdrop-blur-sm">
+      {/* CARD */}
+      <div className="w-[500px] rounded-[32px] bg-white p-8 shadow-2xl">
         {/* HEADER */}
         <div className="flex items-start justify-between">
           <div>
-            <div className="flex h-16 w-16 items-center justify-center rounded-2xl bg-red-100">
-              <Trash2 className="h-8 w-8 text-red-600" />
-            </div>
+            <h1 className="text-3xl font-bold">Delete Flight</h1>
 
-            <h1 className="mt-6 text-3xl font-bold">Delete Flight</h1>
-
-            <p className="mt-3 text-gray-500">
-              Are you sure want to delete flight{" "}
-              <span className="font-semibold text-black">
-                {flight.flight_id}
-              </span>{" "}
-              from mission{" "}
-              <span className="font-semibold text-black">
-                {flight.mission_name}
-              </span>
-              ?
-            </p>
+            <p className="mt-2 text-gray-500">This action cannot be undone.</p>
           </div>
 
           <button
             onClick={onClose}
-            className="flex h-11 w-11 items-center justify-center rounded-full border transition hover:bg-gray-100"
+            className="flex h-12 w-12 items-center justify-center rounded-full border transition hover:bg-gray-100"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        {/* FOOTER */}
-        <div className="mt-10 flex flex-col-reverse gap-3 md:flex-row md:justify-end">
+        {/* BODY */}
+        <div className="mt-8 rounded-2xl border bg-red-50 p-5">
+          <p className="text-sm text-gray-500">Flight ID</p>
+
+          <p className="mt-2 text-xl font-bold">{flight.flight_id}</p>
+
+          <p className="mt-4 text-sm text-gray-500">Mission</p>
+
+          <p className="mt-2 font-semibold">{flight.mission_name}</p>
+        </div>
+
+        {/* ACTION */}
+        <div className="mt-8 flex justify-end gap-3">
+          {/* CANCEL */}
           <button
             onClick={onClose}
-            className="h-[52px] rounded-2xl border px-6 font-semibold transition hover:bg-gray-100"
+            className="rounded-2xl border px-6 py-3 font-semibold transition hover:bg-gray-100"
           >
             Cancel
           </button>
 
+          {/* DELETE */}
           <button
             disabled={loading}
-            onClick={onDelete}
-            className="flex h-[52px] items-center justify-center gap-3 rounded-2xl bg-red-600 px-6 font-semibold text-white transition hover:bg-red-700 disabled:cursor-not-allowed disabled:opacity-60"
+            onClick={handleDelete}
+            className="flex min-w-[160px] items-center justify-center gap-2 rounded-2xl bg-red-600 px-6 py-3 font-semibold text-white transition hover:bg-red-700 disabled:opacity-50"
           >
             {loading ? (
               <>

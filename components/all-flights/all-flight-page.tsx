@@ -148,6 +148,18 @@ export default function AllFlightsPage() {
           setEditFlight(null);
         }}
       />
+
+      {/* DELETE */}
+      <DeleteFlightModal
+        open={!!deleteFlight}
+        flight={deleteFlight}
+        onClose={() => setDeleteFlight(null)}
+        onDelete={(deletedId) => {
+          setFlights((prev) => prev.filter((item) => item.id !== deletedId));
+
+          setDeleteFlight(null);
+        }}
+      />
     </div>
   );
 }

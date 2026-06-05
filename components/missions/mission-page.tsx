@@ -102,7 +102,11 @@ export default function MissionPage({ mission }: Props) {
         open={!!deleteFlight}
         flight={deleteFlight}
         onClose={() => setDeleteFlight(null)}
-        onDelete={() => {}}
+        onDelete={(deletedId) => {
+          setFlights((prev) => prev.filter((item) => item.id !== deletedId));
+
+          setDeleteFlight(null);
+        }}
       />
 
       {/* EDIT */}
