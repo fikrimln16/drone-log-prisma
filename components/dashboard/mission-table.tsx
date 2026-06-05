@@ -121,7 +121,7 @@ export default function MissionTable() {
             </div>
 
             {/* TABLE */}
-            <DashboardTable missions={paginatedData} />
+            <DashboardTable missions={missions} />
 
             {/* PAGINATION */}
             <div className="flex items-center justify-between">
