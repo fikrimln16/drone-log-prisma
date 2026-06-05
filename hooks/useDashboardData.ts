@@ -2,62 +2,46 @@
 
 import { useEffect, useState } from "react";
 
-import { DashboardStats, Mission } from "@/types/dashboard";
-
-import { getDashboardStats, getMissions } from "@/services/dashboard.service";
-
 export default function useDashboardData() {
-  const [missions, setMissions] = useState<Mission[]>([]);
+  const [missions, setMissions] = useState([]);
 
-  const [stats, setStats] = useState<DashboardStats>({
-    total_missions: 0,
+  const [stats, setStats] = useState<any>({});
 
-    total_flights: 0,
-
-    total_duration: 0,
-
-    avg_duration: 0,
-
-    active_flights: 0,
-
-    battery_alerts: 0,
-
-    latest_upload: "",
-
-    mission_growth: 0,
-
-    flight_growth: 0,
-
-    duration_growth: 0,
-
-    avg_growth: 0,
-
-    active_flight_list: [],
-
-    low_battery_flights: [],
-  });
+  const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    async function loadData() {
+    async function fetchData() {
       try {
-        const [missionData, statsData] = await Promise.all([
-          getMissions(),
-          getDashboardStats(),
+        setLoading(true);
+
+        const [missionRes, statsRes] = await Promise.all([
+          fetch("/api/missions"),
+          fetch("/api/dashboard-stats"),
         ]);
+
+        const missionData = await missionRes.json();
+
+        const statsData = await statsRes.json();
+
+        // fake loading biar smooth
+        await new Promise((resolve) => setTimeout(resolve, 300));
 
         setMissions(missionData);
 
         setStats(statsData);
       } catch (error) {
         console.error(error);
+      } finally {
+        setLoading(false);
       }
     }
 
-    loadData();
+    fetchData();
   }, []);
 
   return {
     missions,
     stats,
+    loading,
   };
 }
