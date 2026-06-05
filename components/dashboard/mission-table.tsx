@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 
-import Navbar from "../navbar";
+import Navbar from "../layout/navbar";
 
 import DashboardCharts from "../dashboard-charts";
 

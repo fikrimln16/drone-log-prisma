@@ -1,4 +1,4 @@
-import MissionPage from "@/components/mission-page";
+import MissionPage from "@/components/missions/mission-page";
 
 export default async function Page({
   params,

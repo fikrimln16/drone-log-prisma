@@ -2,13 +2,13 @@
 
 import { useEffect, useState } from "react";
 
-import Navbar from "./navbar";
+import Navbar from "./layout/navbar";
 
-import FlightDetailModal from "./flight-detail-modal";
+import FlightDetailModal from "./flights/flight-detail-modal";
 
-import EditFlightModal from "./edit-flight-modal";
+import EditFlightModal from "./flights/edit-flight-modal";
 
-import DeleteFlightModal from "./delete-flight-modal";
+import DeleteFlightModal from "./flights/delete-flight-modal";
 
 import { ArrowDown, ArrowLeft, ArrowUp, Download } from "lucide-react";
 

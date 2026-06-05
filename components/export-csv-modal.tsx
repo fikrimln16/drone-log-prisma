@@ -6,7 +6,7 @@ import { Download, Loader2, X } from "lucide-react";
 
 import { toast } from "sonner";
 
-import FlightDetailModal from "./flight-detail-modal";
+import FlightDetailModal from "./flights/flight-detail-modal";
 
 type Props = {
   open: boolean;
