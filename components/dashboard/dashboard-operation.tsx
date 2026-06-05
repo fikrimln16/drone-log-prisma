@@ -129,31 +129,41 @@ export default function DashboardOperation({ stats, onOpenActive }: Props) {
         </div>
       </div>
 
-      {/* HEALTH */}
+      {/* TOP PILOT */}
       <div className="flex min-h-[220px] flex-col justify-between rounded-[28px] border bg-white p-6 shadow-sm">
         <div className="flex items-start justify-between">
           <div>
-            <p className="text-sm font-semibold text-gray-500">Flight Health</p>
+            <p className="text-sm font-semibold text-gray-500">Top Pilot</p>
 
-            <h1 className="mt-3 text-4xl font-bold text-green-600">Good</h1>
+            <h1 className="mt-3 text-4xl font-bold text-cyan-600">
+              {stats.top_pilot?.pilot || "-"}
+            </h1>
 
-            <p className="mt-2 text-sm text-gray-500">System operational</p>
+            <p className="mt-2 text-sm text-gray-500">
+              Most active pilot this month
+            </p>
           </div>
 
-          <div className="rounded-2xl bg-green-100 p-4">
-            <Activity className="h-6 w-6 text-green-600" />
+          <div className="rounded-2xl bg-cyan-100 p-4">
+            <Plane className="h-6 w-6 text-cyan-600" />
           </div>
         </div>
 
-        <div className="mt-6">
-          <div className="h-2 rounded-full bg-gray-100">
-            <div className="h-2 w-[92%] rounded-full bg-green-500"></div>
-          </div>
+        {/* STATS */}
+        <div className="mt-6 space-y-4">
+          {/* DURATION */}
+          <div className="rounded-2xl border bg-gray-50 p-4">
+            <p className="text-xs text-gray-500">Total Flight Duration</p>
 
-          <div className="mt-2 flex items-center justify-between text-xs text-gray-500">
-            <span>Operational Status</span>
+            <div className="mt-2 flex items-center justify-between">
+              <span className="text-2xl font-bold">
+                {stats.top_pilot?.duration || 0} min
+              </span>
 
-            <span>92%</span>
+              <span className="rounded-full bg-cyan-100 px-3 py-1 text-xs font-semibold text-cyan-700">
+                {stats.top_pilot?.flights || 0} Flights
+              </span>
+            </div>
           </div>
         </div>
       </div>

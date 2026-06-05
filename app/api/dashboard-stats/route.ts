@@ -177,6 +177,19 @@ export async function GET() {
           DATE_SUB(CURDATE(), INTERVAL 7 DAY)
       `);
 
+    const [topPilotRows]: any = await pool.query(`
+      SELECT
+        pilot,
+        COUNT(*) AS flights,
+        SUM(duration_min) AS duration,
+        MAX(mission_name) AS mission
+      FROM drone_flight_history
+      WHERE pilot IS NOT NULL
+        AND pilot != ''
+      GROUP BY pilot
+      ORDER BY duration DESC
+      LIMIT 1
+    `);
     // =====================================================
     // RESPONSE
     // =====================================================
@@ -229,6 +242,8 @@ export async function GET() {
         currentAvg[0]?.total || 0,
         previousAvg[0]?.total || 0
       ),
+
+      top_pilot: topPilotRows[0] || null,
     });
   } catch (error) {
     console.error(error);
