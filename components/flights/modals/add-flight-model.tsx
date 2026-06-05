@@ -4,11 +4,11 @@ import { Loader2, X } from "lucide-react";
 
 import useAddFlightForm from "@/hooks/useAddFlightForm";
 
-import FlightFormSection from "./flight-form-section";
+import FlightFormSection from "../flight-form-section";
 
-import FlightInput from "./flight-input";
+import FlightInput from "../flight-input";
 
-import BatterySelect from "./battery-select";
+import BatterySelect from "../forms/battery-select";
 
 type Props = {
   mission: string;

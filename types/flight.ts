@@ -7,6 +7,8 @@ export type FlightForm = {
 
   flight_id: string;
 
+  mission_name?: string;
+
   battery_id: string;
 
   battery_id_2: string;

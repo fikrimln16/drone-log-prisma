@@ -16,7 +16,7 @@ import {
 import { Button } from "@/components/ui/button";
 
 import FlightDetailModal from "./flights/flight-detail-modal";
-import AddFlightModal from "./flights/add-flight-model";
+import AddFlightModal from "./flights/modals/add-flight-model";
 
 type Props = {
   mission: string | null;

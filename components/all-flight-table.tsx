@@ -6,7 +6,7 @@ import Navbar from "./layout/navbar";
 
 import FlightDetailModal from "./flights/flight-detail-modal";
 
-import EditFlightModal from "./flights/edit-flight-modal";
+import EditFlightModal from "./flights/modals/edit-flight-modal";
 
 import DeleteFlightModal from "./flights/delete-flight-modal";
 

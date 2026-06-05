@@ -10,11 +10,11 @@ import MissionKPI from "./mission-kpi";
 
 import MissionTable from "./mission-table";
 
-import AddFlightModal from "../flights/add-flight-model";
+import AddFlightModal from "../flights/modals/add-flight-model";
 
 import DeleteFlightModal from "../flights/delete-flight-modal";
 
-import EditFlightModal from "../flights/edit-flight-modal";
+import EditFlightModal from "../flights/modals/edit-flight-modal";
 
 import FlightDetailModal from "../flights/flight-detail-modal";
 
