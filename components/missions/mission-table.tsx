@@ -32,7 +32,7 @@ export default function MissionTable({
   return (
     <div className="overflow-hidden rounded-[32px] border bg-white shadow-sm">
       <div className="w-full overflow-x-auto">
-        <table className="w-full min-w-[1200px]">
+        <table className="w-full min-w-300">
           {/* HEAD */}
           <thead className="border-b bg-gray-50">
             <tr>
