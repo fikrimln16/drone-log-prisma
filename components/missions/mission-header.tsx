@@ -7,7 +7,7 @@ type Props = {
 
   totalFlights: number;
 
-  onExport: () => void;
+  onOpenExport: () => void;
 
   onAdd: () => void;
 };
@@ -15,7 +15,7 @@ type Props = {
 export default function MissionHeader({
   mission,
   totalFlights,
-  onExport,
+  onOpenExport,
   onAdd,
 }: Props) {
   return (
@@ -29,12 +29,13 @@ export default function MissionHeader({
         Back to Dashboard
       </Link>
 
-      {/* TITLE */}
+      {/* HEADER */}
       <div className="flex flex-col gap-6 md:flex-row md:items-start md:justify-between">
+        {/* TITLE */}
         <div>
-          <h1 className="text-4xl font-bold md:text-6xl">{mission}</h1>
+          <h1 className="text-4xl font-bold tracking-tight">{mission}</h1>
 
-          <p className="mt-3 text-base text-gray-500 md:text-xl">
+          <p className="mt-2 text-lg text-gray-500">
             {totalFlights} flights logged
           </p>
         </div>
@@ -43,8 +44,8 @@ export default function MissionHeader({
         <div className="flex items-center gap-3">
           {/* EXPORT */}
           <button
-            onClick={onExport}
-            className="flex h-[56px] items-center gap-3 rounded-2xl border bg-white px-6 font-semibold shadow-sm transition hover:bg-gray-100"
+            onClick={onOpenExport}
+            className="flex h-[52px] items-center gap-3 rounded-2xl border bg-white px-5 font-semibold shadow-sm transition hover:bg-gray-100"
           >
             <Download className="h-5 w-5" />
             Export CSV
@@ -53,7 +54,7 @@ export default function MissionHeader({
           {/* ADD */}
           <button
             onClick={onAdd}
-            className="flex h-[56px] items-center gap-3 rounded-2xl bg-black px-6 font-semibold text-white shadow-lg transition hover:scale-[1.02]"
+            className="flex h-[52px] items-center gap-3 rounded-2xl bg-black px-5 font-semibold text-white shadow-lg transition hover:scale-[1.02]"
           >
             <Plus className="h-5 w-5" />
             Add Flight

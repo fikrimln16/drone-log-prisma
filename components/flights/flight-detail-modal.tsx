@@ -12,7 +12,7 @@ export default function FlightDetailModal({ data, onClose }: Props) {
   if (!data) return null;
 
   return (
-    <div className="fixed inset-0 z-[9999] flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm">
+    <div className="fixed inset-0 z-[100000] flex items-center justify-center bg-black/40 backdrop-blur-sm">
       {/* MODAL */}
       <div className="relative flex max-h-[92vh] w-full max-w-[1100px] flex-col overflow-hidden rounded-[32px] bg-white shadow-2xl">
         {/* HEADER */}

@@ -6,8 +6,6 @@ import Navbar from "../layout/navbar";
 
 import MissionHeader from "./mission-header";
 
-import MissionKPI from "./mission-kpi";
-
 import MissionTable from "./mission-table";
 
 import AddFlightModal from "../flights/modals/add-flight-model";
@@ -18,13 +16,11 @@ import EditFlightModal from "../flights/modals/edit-flight-modal";
 
 import FlightDetailModal from "../flights/flight-detail-modal";
 
+import ExportCSVModal from "../export/export-csv-modal";
+
 import useMissionFlights from "@/hooks/useMissionFlight";
 
 import useMissionSort from "@/hooks/useMissionSort";
-
-import useMissionStats from "@/hooks/useMissionStats";
-
-import useExportCSV from "@/hooks/useExportCSV";
 
 import MissionKpiGrid from "./kpi/mission-kpi-grid";
 
@@ -40,14 +36,10 @@ export default function MissionPage({ mission }: Props) {
   const { sortedFlights, handleSort, sortBy, sortDirection } =
     useMissionSort(flights);
 
-  // KPI
-  const { totalFlights, totalDuration, avgDuration } = useMissionStats(flights);
-
-  // EXPORT
-  const { exportCSV } = useExportCSV();
-
   // MODAL
   const [openAdd, setOpenAdd] = useState(false);
+
+  const [openExport, setOpenExport] = useState(false);
 
   const [selectedFlight, setSelectedFlight] = useState<any>(null);
 
@@ -66,7 +58,7 @@ export default function MissionPage({ mission }: Props) {
         <MissionHeader
           mission={mission}
           totalFlights={flights.length}
-          onExport={() => exportCSV(mission, flights)}
+          onOpenExport={() => setOpenExport(true)}
           onAdd={() => setOpenAdd(true)}
         />
 
@@ -96,6 +88,13 @@ export default function MissionPage({ mission }: Props) {
         mission={mission}
         open={openAdd}
         onClose={() => setOpenAdd(false)}
+      />
+
+      {/* EXPORT */}
+      <ExportCSVModal
+        open={openExport}
+        flights={flights}
+        onClose={() => setOpenExport(false)}
       />
 
       {/* DELETE */}
