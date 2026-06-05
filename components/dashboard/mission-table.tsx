@@ -10,7 +10,7 @@ import DashboardCharts from "../dashboard-charts";
 
 import UploadCSV from "../upload-csv";
 
-import ActiveFlightsModal from "../active-flight-modal";
+import ActiveFlightsModal from "./active-flight-modal";
 
 // DASHBOARD COMPONENTS
 import DashboardKPI from "./dashboard-kpi";
