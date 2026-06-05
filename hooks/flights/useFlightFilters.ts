@@ -9,11 +9,11 @@ export default function useFlightFilters(flights: any[]) {
 
   const [endDate, setEndDate] = useState("");
 
+  const [selectedMission, setSelectedMission] = useState("");
+
   const [selectedAma, setSelectedAma] = useState("");
 
   const [selectedEstate, setSelectedEstate] = useState("");
-
-  const [selectedMission, setSelectedMission] = useState("");
 
   const [selectedBattery, setSelectedBattery] = useState("");
 
@@ -21,8 +21,6 @@ export default function useFlightFilters(flights: any[]) {
 
   const filteredFlights = useMemo(() => {
     return flights.filter((item) => {
-      const itemDate = new Date(item.flight_date);
-
       const validSearch =
         !search ||
         Object.values(item)
@@ -30,31 +28,33 @@ export default function useFlightFilters(flights: any[]) {
           .toLowerCase()
           .includes(search.toLowerCase());
 
-      const validStart = !startDate || itemDate >= new Date(startDate);
-
-      const validEnd = !endDate || itemDate <= new Date(endDate);
+      const validMission =
+        !selectedMission || item.mission_name === selectedMission;
 
       const validAma = !selectedAma || item.ama === selectedAma;
 
       const validEstate = !selectedEstate || item.estate === selectedEstate;
-
-      const validMission =
-        !selectedMission || item.mission_name === selectedMission;
 
       const validBattery =
         !selectedBattery || item.battery_id === selectedBattery;
 
       const validPilot = !selectedPilot || item.pilot === selectedPilot;
 
+      const itemDate = new Date(item.flight_date);
+
+      const validStart = !startDate || itemDate >= new Date(startDate);
+
+      const validEnd = !endDate || itemDate <= new Date(endDate);
+
       return (
         validSearch &&
-        validStart &&
-        validEnd &&
+        validMission &&
         validAma &&
         validEstate &&
-        validMission &&
         validBattery &&
-        validPilot
+        validPilot &&
+        validStart &&
+        validEnd
       );
     });
   }, [
@@ -62,16 +62,32 @@ export default function useFlightFilters(flights: any[]) {
     search,
     startDate,
     endDate,
+    selectedMission,
     selectedAma,
     selectedEstate,
-    selectedMission,
     selectedBattery,
     selectedPilot,
   ]);
 
-  return {
-    filteredFlights,
+  function resetFilters() {
+    setSearch("");
 
+    setStartDate("");
+
+    setEndDate("");
+
+    setSelectedMission("");
+
+    setSelectedAma("");
+
+    setSelectedEstate("");
+
+    setSelectedBattery("");
+
+    setSelectedPilot("");
+  }
+
+  return {
     search,
     setSearch,
 
@@ -81,19 +97,23 @@ export default function useFlightFilters(flights: any[]) {
     endDate,
     setEndDate,
 
+    selectedMission,
+    setSelectedMission,
+
     selectedAma,
     setSelectedAma,
 
     selectedEstate,
     setSelectedEstate,
 
-    selectedMission,
-    setSelectedMission,
-
     selectedBattery,
     setSelectedBattery,
 
     selectedPilot,
     setSelectedPilot,
+
+    filteredFlights,
+
+    resetFilters,
   };
 }
