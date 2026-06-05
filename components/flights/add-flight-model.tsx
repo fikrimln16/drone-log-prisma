@@ -1,147 +1,28 @@
 "use client";
 
-import { useMemo, useState } from "react";
-
 import { Loader2, X } from "lucide-react";
 
-import { toast } from "sonner";
+import useAddFlightForm from "@/hooks/useAddFlightForm";
+
+import FlightFormSection from "./flight-form-section";
+
+import FlightInput from "./flight-input";
+
+import BatterySelect from "./battery-select";
 
 type Props = {
   mission: string;
+
   open: boolean;
+
   onClose: () => void;
 };
 
-type Errors = {
-  [key: string]: string;
-};
-
 export default function AddFlightModal({ mission, open, onClose }: Props) {
-  const [loading, setLoading] = useState(false);
-
-  const [form, setForm] = useState({
-    flight_date: "",
-
-    ama: "",
-
-    estate: "",
-
-    flight_id: "",
-
-    battery_id: "",
-
-    battery_id_2: "",
-
-    battery_color: "",
-
-    start_percent: "",
-
-    end_percent: "",
-
-    start_volt: "",
-
-    end_volt: "",
-
-    start_time: "",
-
-    end_time: "",
-
-    duration_min: "",
-
-    notes: "",
-  });
-
-  const [errors, setErrors] = useState<Errors>({});
-
-  const isValid = useMemo(() => {
-    return (
-      form.flight_date &&
-      form.ama &&
-      form.estate &&
-      form.flight_id &&
-      form.battery_id &&
-      form.battery_id_2 &&
-      form.battery_color &&
-      form.start_percent &&
-      form.end_percent &&
-      form.start_volt &&
-      form.end_volt &&
-      form.start_time &&
-      form.end_time &&
-      form.duration_min
-    );
-  }, [form]);
+  const { form, setForm, errors, loading, isValid, handleSubmit } =
+    useAddFlightForm(mission, onClose);
 
   if (!open) return null;
-
-  const validate = () => {
-    const newErrors: Errors = {};
-
-    Object.entries(form).forEach(([key, value]) => {
-      if (key === "notes") return;
-
-      if (!value) {
-        newErrors[key] = "Field wajib diisi";
-      }
-    });
-
-    setErrors(newErrors);
-
-    return Object.keys(newErrors).length === 0;
-  };
-
-  const handleSubmit = async () => {
-    const valid = validate();
-
-    if (!valid) return;
-
-    try {
-      setLoading(true);
-
-      // LOADING DELAY
-      await new Promise((resolve) => setTimeout(resolve, 800));
-
-      const res = await fetch("/api/flights/add", {
-        method: "POST",
-
-        headers: {
-          "Content-Type": "application/json",
-        },
-
-        body: JSON.stringify({
-          ...form,
-          mission_name: mission,
-        }),
-      });
-
-      const result = await res.json();
-
-      // FAILED
-      if (!res.ok) {
-        toast.error(result.message || "Failed add flight");
-
-        return;
-      }
-
-      // SUCCESS
-      toast.success("Flight added successfully");
-
-      // CLOSE MODAL
-      onClose();
-
-      // REFRESH TABLE
-      // DELAY AGAR TOAST TERLIHAT
-      setTimeout(() => {
-        window.location.reload();
-      }, 1200);
-    } catch (err) {
-      console.error(err);
-
-      toast.error("Internal server error");
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="fixed inset-0 z-[99999] flex items-center justify-center bg-black/40 backdrop-blur-sm">
@@ -157,7 +38,7 @@ export default function AddFlightModal({ mission, open, onClose }: Props) {
 
           <button
             onClick={onClose}
-            className="flex h-14 w-14 items-center justify-center rounded-full border hover:bg-gray-100"
+            className="flex h-14 w-14 items-center justify-center rounded-full border transition hover:bg-gray-100"
           >
             <X className="h-7 w-7" />
           </button>
@@ -167,219 +48,230 @@ export default function AddFlightModal({ mission, open, onClose }: Props) {
         <div className="flex-1 overflow-y-auto px-10 py-8">
           <div className="space-y-10">
             {/* FLIGHT INFO */}
-            <Section title="Flight Information">
+            <FlightFormSection title="Flight Information">
               <div className="grid grid-cols-2 gap-6">
-                <Input
+                <FlightInput
                   label="Flight Date"
                   type="date"
                   value={form.flight_date}
                   error={errors.flight_date}
-                  onChange={(v: string) =>
+                  onChange={(value) =>
                     setForm({
                       ...form,
-                      flight_date: v,
+                      flight_date: value,
                     })
                   }
                 />
 
-                <Input
+                <FlightInput
                   label="Flight ID"
                   value={form.flight_id}
                   error={errors.flight_id}
-                  onChange={(v: string) =>
+                  onChange={(value) =>
                     setForm({
                       ...form,
-                      flight_id: v,
+                      flight_id: value,
                     })
                   }
                 />
 
-                <Input
+                <FlightInput
                   label="AMA"
                   value={form.ama}
                   error={errors.ama}
-                  onChange={(v: string) =>
+                  onChange={(value) =>
                     setForm({
                       ...form,
-                      ama: v,
+                      ama: value,
                     })
                   }
                 />
 
-                <Input
+                <FlightInput
                   label="Estate"
                   value={form.estate}
                   error={errors.estate}
-                  onChange={(v: string) =>
+                  onChange={(value) =>
                     setForm({
                       ...form,
-                      estate: v,
+                      estate: value,
                     })
                   }
                 />
 
-                <Input
+                <FlightInput
                   label="Battery ID"
                   value={form.battery_id}
                   error={errors.battery_id}
-                  onChange={(v: string) =>
+                  onChange={(value) =>
                     setForm({
                       ...form,
-                      battery_id: v,
+                      battery_id: value,
                     })
                   }
                 />
 
-                <Input
+                <FlightInput
                   label="Battery ID 2"
                   value={form.battery_id_2}
                   error={errors.battery_id_2}
-                  onChange={(v: string) =>
+                  onChange={(value) =>
                     setForm({
                       ...form,
-                      battery_id_2: v,
+                      battery_id_2: value,
                     })
                   }
                 />
 
-                <SelectInput
+                <BatterySelect
                   label="Battery Color"
                   value={form.battery_color}
                   error={errors.battery_color}
-                  onChange={(v: string) =>
+                  onChange={(value) =>
                     setForm({
                       ...form,
-                      battery_color: v,
+                      battery_color: value,
                     })
                   }
                 />
               </div>
-            </Section>
+            </FlightFormSection>
 
             {/* BATTERY */}
-            <Section title="Battery Information">
+            <FlightFormSection title="Battery Information">
               <div className="grid grid-cols-2 gap-6">
-                <Input
+                <FlightInput
                   label="Start Percent"
                   type="number"
                   value={form.start_percent}
                   error={errors.start_percent}
-                  onChange={(v: string) =>
+                  onChange={(value) =>
                     setForm({
                       ...form,
-                      start_percent: v,
+                      start_percent: value,
                     })
                   }
                 />
 
-                <Input
+                <FlightInput
                   label="End Percent"
                   type="number"
                   value={form.end_percent}
                   error={errors.end_percent}
-                  onChange={(v: string) =>
+                  onChange={(value) =>
                     setForm({
                       ...form,
-                      end_percent: v,
+                      end_percent: value,
                     })
                   }
                 />
 
-                <Input
+                <FlightInput
                   label="Start Volt"
                   type="number"
                   value={form.start_volt}
                   error={errors.start_volt}
-                  onChange={(v: string) =>
+                  onChange={(value) =>
                     setForm({
                       ...form,
-                      start_volt: v,
+                      start_volt: value,
                     })
                   }
                 />
 
-                <Input
+                <FlightInput
                   label="End Volt"
                   type="number"
                   value={form.end_volt}
                   error={errors.end_volt}
-                  onChange={(v: string) =>
+                  onChange={(value) =>
                     setForm({
                       ...form,
-                      end_volt: v,
+                      end_volt: value,
                     })
                   }
                 />
               </div>
-            </Section>
+            </FlightFormSection>
 
             {/* TIME */}
-            <Section title="Flight Time">
+            <FlightFormSection title="Flight Time">
               <div className="grid grid-cols-3 gap-6">
-                <Input
+                <FlightInput
                   label="Start Time"
                   type="time"
                   value={form.start_time}
                   error={errors.start_time}
-                  onChange={(v: string) =>
+                  onChange={(value) =>
                     setForm({
                       ...form,
-                      start_time: v,
+                      start_time: value,
                     })
                   }
                 />
 
-                <Input
+                <FlightInput
                   label="End Time"
                   type="time"
                   value={form.end_time}
                   error={errors.end_time}
-                  onChange={(v: string) =>
+                  onChange={(value) =>
                     setForm({
                       ...form,
-                      end_time: v,
+                      end_time: value,
                     })
                   }
                 />
 
-                <Input
+                <FlightInput
                   label="Duration (min)"
                   type="number"
                   value={form.duration_min}
                   error={errors.duration_min}
-                  onChange={(v: string) =>
+                  onChange={(value) =>
                     setForm({
                       ...form,
-                      duration_min: v,
+                      duration_min: value,
                     })
                   }
                 />
               </div>
-            </Section>
+            </FlightFormSection>
 
             {/* NOTES */}
-            <Section title="Notes">
-              <textarea
-                value={form.notes}
-                onChange={(e) =>
-                  setForm({
-                    ...form,
-                    notes: e.target.value,
-                  })
-                }
-                className="min-h-[160px] w-full rounded-2xl border bg-gray-50 p-5 text-lg outline-none"
-                placeholder="Optional notes..."
-              />
-            </Section>
+            <FlightFormSection title="Notes">
+              <div>
+                <label className="mb-2 block text-sm font-bold tracking-wide text-gray-600 uppercase">
+                  Additional Notes
+                </label>
+
+                <textarea
+                  value={form.notes}
+                  onChange={(e) =>
+                    setForm({
+                      ...form,
+                      notes: e.target.value,
+                    })
+                  }
+                  className="min-h-[160px] w-full rounded-2xl border border-gray-200 bg-gray-50 p-5 text-lg transition outline-none focus:border-blue-500"
+                  placeholder="Optional notes..."
+                />
+              </div>
+            </FlightFormSection>
           </div>
         </div>
 
         {/* FOOTER */}
         <div className="flex justify-end gap-4 border-t px-10 py-6">
-          <button onClick={onClose} className="rounded-2xl border px-6 py-3">
+          {/* CANCEL */}
+          <button
+            onClick={onClose}
+            className="rounded-2xl border px-6 py-3 font-medium transition hover:bg-gray-100"
+          >
             Cancel
           </button>
 
+          {/* SAVE */}
           <button
             disabled={!isValid || loading}
             onClick={handleSubmit}
@@ -387,7 +279,7 @@ export default function AddFlightModal({ mission, open, onClose }: Props) {
               !isValid || loading
                 ? "cursor-not-allowed bg-gray-400"
                 : "bg-black hover:scale-[1.02]"
-            } `}
+            }`}
           >
             {loading ? (
               <>
@@ -400,71 +292,6 @@ export default function AddFlightModal({ mission, open, onClose }: Props) {
           </button>
         </div>
       </div>
-    </div>
-  );
-}
-
-function Section({ title, children }: any) {
-  return (
-    <div>
-      <h2 className="mb-6 border-b pb-3 text-2xl font-bold tracking-wider text-blue-600 uppercase">
-        {title}
-      </h2>
-
-      {children}
-    </div>
-  );
-}
-
-function Input({ label, value, onChange, error, type = "text" }: any) {
-  return (
-    <div>
-      <label className="mb-2 block text-sm font-bold tracking-wide text-gray-600 uppercase">
-        {label}
-      </label>
-
-      <input
-        type={type}
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className={`h-[64px] w-full rounded-2xl border bg-gray-50 px-5 text-lg outline-none ${
-          error ? "border-red-500" : "border-gray-200"
-        }`}
-      />
-
-      {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
-    </div>
-  );
-}
-
-function SelectInput({ label, value, onChange, error }: any) {
-  return (
-    <div>
-      <label className="mb-2 block text-sm font-bold tracking-wide text-gray-600 uppercase">
-        {label}
-      </label>
-
-      <select
-        value={value}
-        onChange={(e) => onChange(e.target.value)}
-        className={`h-[64px] w-full rounded-2xl border bg-gray-50 px-5 text-lg outline-none ${
-          error ? "border-red-500" : "border-gray-200"
-        }`}
-      >
-        <option value="">Select Color</option>
-
-        <option value="Black">Black</option>
-
-        <option value="White">White</option>
-
-        <option value="Red">Red</option>
-
-        <option value="Blue">Blue</option>
-
-        <option value="Green">Green</option>
-      </select>
-
-      {error && <p className="mt-2 text-sm text-red-500">{error}</p>}
     </div>
   );
 }
