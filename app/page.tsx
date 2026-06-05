@@ -1,4 +1,4 @@
-import MissionTable from "@/components/mission-table";
+import MissionTable from "@/components/dashboard/mission-table";
 
 export default function HomePage() {
   return (
