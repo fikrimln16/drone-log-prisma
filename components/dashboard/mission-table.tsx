@@ -193,6 +193,8 @@ export default function MissionTable() {
         onClose={() => setOpenActiveModal(false)}
         flights={stats.active_flight_list || []}
       />
+
+      <Footer />
     </div>
   );
 }

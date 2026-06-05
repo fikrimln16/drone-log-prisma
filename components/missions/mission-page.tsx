@@ -26,6 +26,8 @@ import MissionKpiGrid from "./kpi/mission-kpi-grid";
 
 import usePagination from "@/hooks/usePagination";
 
+import Footer from "../layout/footer";
+
 type Props = {
   mission: string;
 };
@@ -176,6 +178,8 @@ export default function MissionPage({ mission }: Props) {
           );
         }}
       />
+
+      <Footer />
     </div>
   );
 }

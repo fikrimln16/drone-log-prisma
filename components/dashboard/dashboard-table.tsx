@@ -64,15 +64,16 @@ export default function DashboardTable({ missions }: Props) {
 
   return (
     <div className="overflow-hidden rounded-[32px] border bg-white shadow-sm">
-      <div className="w-full">
-        <table className="w-full table-fixed">
+      {/* RESPONSIVE WRAPPER */}
+      <div className="w-full overflow-x-auto">
+        <table className="w-full min-w-[850px]">
           {/* HEAD */}
           <thead className="border-b bg-gray-50">
             <tr>
               {/* MISSION */}
               <th
                 onClick={() => handleSort("mission_name")}
-                className="cursor-pointer p-6 text-left text-sm font-bold transition hover:bg-gray-100"
+                className="cursor-pointer px-4 py-5 text-left text-xs font-bold whitespace-nowrap transition hover:bg-gray-100 md:px-6 md:text-sm"
               >
                 <div className="flex items-center gap-2">
                   MISSION
@@ -83,7 +84,7 @@ export default function DashboardTable({ missions }: Props) {
               {/* LAST FLIGHT */}
               <th
                 onClick={() => handleSort("last_flight")}
-                className="cursor-pointer p-6 text-left text-sm font-bold transition hover:bg-gray-100"
+                className="cursor-pointer px-4 py-5 text-left text-xs font-bold whitespace-nowrap transition hover:bg-gray-100 md:px-6 md:text-sm"
               >
                 <div className="flex items-center gap-2">
                   LAST FLIGHT
@@ -94,7 +95,7 @@ export default function DashboardTable({ missions }: Props) {
               {/* FLIGHTS */}
               <th
                 onClick={() => handleSort("total_flights")}
-                className="cursor-pointer p-6 text-left text-sm font-bold transition hover:bg-gray-100"
+                className="cursor-pointer px-4 py-5 text-left text-xs font-bold whitespace-nowrap transition hover:bg-gray-100 md:px-6 md:text-sm"
               >
                 <div className="flex items-center gap-2">
                   FLIGHTS
@@ -105,7 +106,7 @@ export default function DashboardTable({ missions }: Props) {
               {/* TOTAL DURATION */}
               <th
                 onClick={() => handleSort("total_duration")}
-                className="cursor-pointer p-6 text-left text-sm font-bold transition hover:bg-gray-100"
+                className="cursor-pointer px-4 py-5 text-left text-xs font-bold whitespace-nowrap transition hover:bg-gray-100 md:px-6 md:text-sm"
               >
                 <div className="flex items-center gap-2">
                   TOTAL DURATION
@@ -116,7 +117,7 @@ export default function DashboardTable({ missions }: Props) {
               {/* AVG */}
               <th
                 onClick={() => handleSort("avg_duration")}
-                className="cursor-pointer p-6 text-left text-sm font-bold transition hover:bg-gray-100"
+                className="cursor-pointer px-4 py-5 text-left text-xs font-bold whitespace-nowrap transition hover:bg-gray-100 md:px-6 md:text-sm"
               >
                 <div className="flex items-center gap-2">
                   AVG DURATION
@@ -125,7 +126,9 @@ export default function DashboardTable({ missions }: Props) {
               </th>
 
               {/* ACTION */}
-              <th className="p-6 text-right text-sm font-bold">ACTION</th>
+              <th className="px-4 py-5 text-right text-xs font-bold whitespace-nowrap md:px-6 md:text-sm">
+                ACTION
+              </th>
             </tr>
           </thead>
 
@@ -137,39 +140,41 @@ export default function DashboardTable({ missions }: Props) {
                 className="border-b transition hover:bg-gray-50"
               >
                 {/* MISSION */}
-                <td className="p-6">
-                  <span className="rounded-full bg-blue-100 px-4 py-1 text-sm font-semibold text-blue-700">
+                <td className="px-4 py-5 md:px-6">
+                  <span className="inline-flex rounded-full bg-blue-100 px-3 py-1 text-xs font-semibold text-blue-700 md:px-4 md:text-sm">
                     {item.mission_name}
                   </span>
                 </td>
 
                 {/* LAST */}
-                <td className="p-6 text-lg">
+                <td className="px-4 py-5 text-sm whitespace-nowrap md:px-6 md:text-base">
                   {new Date(item.last_flight).toLocaleDateString("id-ID")}
                 </td>
 
                 {/* FLIGHTS */}
-                <td className="p-6">
-                  <span className="rounded-full bg-purple-100 px-4 py-1 text-sm text-purple-700">
+                <td className="px-4 py-5 md:px-6">
+                  <span className="inline-flex rounded-full bg-purple-100 px-3 py-1 text-xs text-purple-700 md:px-4 md:text-sm">
                     {item.total_flights} flights
                   </span>
                 </td>
 
                 {/* TOTAL */}
-                <td className="p-6">
-                  <span className="rounded-full bg-yellow-100 px-4 py-1 text-sm text-yellow-700">
+                <td className="px-4 py-5 md:px-6">
+                  <span className="inline-flex rounded-full bg-yellow-100 px-3 py-1 text-xs text-yellow-700 md:px-4 md:text-sm">
                     {item.total_duration} min
                   </span>
                 </td>
 
                 {/* AVG */}
-                <td className="p-6 text-lg">{item.avg_duration} min</td>
+                <td className="px-4 py-5 text-sm whitespace-nowrap md:px-6 md:text-base">
+                  {item.avg_duration} min
+                </td>
 
                 {/* ACTION */}
-                <td className="w-[140px] p-6 text-right">
+                <td className="px-4 py-5 text-right md:px-6">
                   <Link
                     href={`/missions/${item.mission_name}`}
-                    className="inline-flex rounded-2xl border bg-white px-5 py-2 text-sm transition hover:bg-gray-100"
+                    className="inline-flex rounded-xl border bg-white px-4 py-2 text-xs transition hover:bg-gray-100 md:rounded-2xl md:px-5 md:text-sm"
                   >
                     View
                   </Link>
