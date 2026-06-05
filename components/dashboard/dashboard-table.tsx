@@ -64,8 +64,8 @@ export default function DashboardTable({ missions }: Props) {
 
   return (
     <div className="overflow-hidden rounded-[32px] border bg-white shadow-sm">
-      <div className="w-full overflow-x-auto">
-        <table className="w-full min-w-[1100px]">
+      <div className="w-full">
+        <table className="w-full table-fixed">
           {/* HEAD */}
           <thead className="border-b bg-gray-50">
             <tr>
@@ -166,7 +166,7 @@ export default function DashboardTable({ missions }: Props) {
                 <td className="p-6 text-lg">{item.avg_duration} min</td>
 
                 {/* ACTION */}
-                <td className="p-6 text-right">
+                <td className="w-[140px] p-6 text-right">
                   <Link
                     href={`/missions/${item.mission_name}`}
                     className="inline-flex rounded-2xl border bg-white px-5 py-2 text-sm transition hover:bg-gray-100"
