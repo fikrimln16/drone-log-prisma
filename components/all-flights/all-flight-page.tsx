@@ -129,55 +129,70 @@ export default function AllFlightsPage() {
           onDelete={(item) => setDeleteFlight(item)}
         />
         {/* PAGINATION */}
-        <div className="flex items-center justify-between">
-          {/* INFO */}
-          <p className="text-sm text-gray-500">
-            Page <span className="font-semibold text-black">{currentPage}</span>{" "}
-            of <span className="font-semibold text-black">{totalPages}</span>
-          </p>
+        {/* PAGINATION */}
+<div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
+  {/* INFO */}
+  <p className="text-sm text-gray-500">
+    Page{" "}
+    <span className="font-semibold text-black">
+      {currentPage}
+    </span>{" "}
+    of{" "}
+    <span className="font-semibold text-black">
+      {totalPages}
+    </span>
+  </p>
 
-          {/* BUTTON */}
-          <div className="flex items-center gap-2">
-            {/* PREVIOUS */}
-            <button
-              disabled={currentPage === 1}
-              onClick={() => setCurrentPage((prev) => prev - 1)}
-              className="rounded-xl border px-4 py-2 text-sm transition hover:bg-gray-100 disabled:opacity-40"
-            >
-              Previous
-            </button>
+  {/* PAGINATION BUTTON */}
+  <div className="w-full overflow-x-auto md:w-auto">
+    <div className="flex min-w-max items-center gap-2 pb-1">
+      {/* PREVIOUS */}
+      <button
+        disabled={currentPage === 1}
+        onClick={() =>
+          setCurrentPage((prev) => prev - 1)
+        }
+        className="rounded-xl border px-3 py-2 text-sm transition hover:bg-gray-100 disabled:opacity-40"
+      >
+        Previous
+      </button>
 
-            {/* PAGE NUMBER */}
-            {Array.from({
-              length: totalPages,
-            }).map((_, index) => {
-              const page = index + 1;
+      {/* PAGE NUMBER */}
+      {Array.from({
+        length: totalPages,
+      }).map((_, index) => {
+        const page = index + 1;
 
-              return (
-                <button
-                  key={page}
-                  onClick={() => setCurrentPage(page)}
-                  className={`h-10 w-10 rounded-xl border text-sm font-medium transition ${
-                    currentPage === page
-                      ? "bg-black text-white"
-                      : "bg-white hover:bg-gray-100"
-                  } `}
-                >
-                  {page}
-                </button>
-              );
-            })}
+        return (
+          <button
+            key={page}
+            onClick={() =>
+              setCurrentPage(page)
+            }
+            className={`h-10 min-w-[40px] rounded-xl border px-3 text-sm font-medium transition ${
+              currentPage === page
+                ? "bg-black text-white"
+                : "bg-white hover:bg-gray-100"
+            }`}
+          >
+            {page}
+          </button>
+        );
+      })}
 
-            {/* NEXT */}
-            <button
-              disabled={currentPage === totalPages}
-              onClick={() => setCurrentPage((prev) => prev + 1)}
-              className="rounded-xl border px-4 py-2 text-sm transition hover:bg-gray-100 disabled:opacity-40"
-            >
-              Next
-            </button>
-          </div>
-        </div>
+      {/* NEXT */}
+      <button
+        disabled={currentPage === totalPages}
+        onClick={() =>
+          setCurrentPage((prev) => prev + 1)
+        }
+        className="rounded-xl border px-3 py-2 text-sm transition hover:bg-gray-100 disabled:opacity-40"
+      >
+        Next
+      </button>
+    </div>
+  </div>
+</div>
       </div>
 
       {/* EXPORT MODAL */}
