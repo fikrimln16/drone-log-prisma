@@ -1,98 +1,49 @@
-// import { NextResponse } from "next/server";
-
-// import pool from "@/lib/db";
-
-// export async function POST(req: Request) {
-//   try {
-//     const body = await req.json();
-
-//     console.log(body);
-
-//     for (const item of body) {
-//       await pool.query(
-//         `
-//         INSERT INTO drone_flight_history (
-//           flight_date,
-//           ama,
-//           estate,
-//           pilot,
-//           flight_id,
-//           mission_name,
-//           battery_id,
-//           battery_id_2,
-//           battery_color,
-//           start_percent,
-//           end_percent,
-//           start_volt,
-//           end_volt,
-//           start_time,
-//           end_time,
-//           duration_min,
-//           notes
-//         )
-//         VALUES (
-//           ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?
-//         )
-//         `,
-//         [
-//           item.flight_date,
-
-//           item.ama,
-
-//           item.estate,
-
-//           item.pilot,
-
-//           item.flight_id,
-
-//           item.mission_name,
-
-//           item.battery_id,
-
-//           item.battery_id_2,
-
-//           item.battery_color,
-
-//           item.start_percent,
-
-//           item.end_percent,
-
-//           item.start_volt,
-
-//           item.end_volt,
-
-//           item.start_time,
-
-//           item.end_time,
-
-//           item.duration_min,
-
-//           item.notes || "",
-//         ]
-//       );
-//     }
-
-//     return NextResponse.json({
-//       success: true,
-//       message: "CSV uploaded successfully",
-//     });
-//   } catch (err) {
-//     console.error(err);
-
-//     return NextResponse.json(
-//       {
-//         success: false,
-//         message: "Upload failed",
-//       },
-//       {
-//         status: 500,
-//       }
-//     );
-//   }
-// }
 import { NextResponse } from "next/server";
 
 import { prisma } from "@/lib/prisma";
+
+// =====================================================
+// PARSE DATE
+// FORMAT:
+// 01-01-2026
+// =====================================================
+
+function parseDate(dateString: string) {
+  const [day, month, year] =
+    dateString.split("-");
+
+  return new Date(
+    Number(year),
+    Number(month) - 1,
+    Number(day)
+  );
+}
+
+// =====================================================
+// PARSE DATETIME
+// FORMAT:
+// 01-01-2026 + 13:00
+// =====================================================
+
+function parseDateTime(
+  dateString: string,
+  timeString: string
+) {
+  const [day, month, year] =
+    dateString.split("-");
+
+  const [hour, minute] =
+    timeString.split(":");
+
+  return new Date(
+    Number(year),
+    Number(month) - 1,
+    Number(day),
+    Number(hour),
+    Number(minute),
+    0
+  );
+}
 
 export async function POST(req: Request) {
   try {
@@ -127,13 +78,19 @@ export async function POST(req: Request) {
 
     const formattedData = body.map(
       (item) => ({
-        flight_date: item.flight_date
-          ? new Date(item.flight_date)
-          : new Date(),
+        // DATE
+        flight_date:
+          item.flight_date
+            ? parseDate(
+                item.flight_date
+              )
+            : new Date(),
 
+        // TEXT
         ama: item.ama || "",
 
-        estate: item.estate || "",
+        estate:
+          item.estate || "",
 
         pilot: item.pilot || "",
 
@@ -152,6 +109,7 @@ export async function POST(req: Request) {
         battery_color:
           item.battery_color || "",
 
+        // NUMBER
         start_percent:
           item.start_percent !==
           undefined
@@ -180,14 +138,26 @@ export async function POST(req: Request) {
             ? Number(item.end_volt)
             : 0,
 
-        start_time: item.start_time
-          ? new Date(item.start_time)
-          : undefined,
+        // DATETIME
+        start_time:
+          item.start_time &&
+          item.flight_date
+            ? parseDateTime(
+                item.flight_date,
+                item.start_time
+              )
+            : undefined,
 
-        end_time: item.end_time
-          ? new Date(item.end_time)
-          : undefined,
+        end_time:
+          item.end_time &&
+          item.flight_date
+            ? parseDateTime(
+                item.flight_date,
+                item.end_time
+              )
+            : undefined,
 
+        // NUMBER
         duration_min:
           item.duration_min !==
           undefined
@@ -196,9 +166,12 @@ export async function POST(req: Request) {
               )
             : 0,
 
+        // NOTES
         notes: item.notes || "",
       })
     );
+
+    console.log(formattedData);
 
     // =====================================================
     // INSERT MANY
