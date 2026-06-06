@@ -87,7 +87,7 @@ export default function ExportCSVModal({ open, flights, onClose }: Props) {
     <>
       <div className="fixed inset-0 z-[999999] flex items-center justify-center bg-black/40 p-4 backdrop-blur-sm">
         {/* MODAL */}
-        <div className="flex h-[90vh] w-full max-w-[1400px] flex-col overflow-hidden rounded-[32px] bg-white shadow-2xl">
+        <div className="flex h-[90vh] w-full max-w-[1400px] flex-col rounded-[32px] bg-white shadow-2xl">
           {/* HEADER */}
           <div className="flex items-start justify-between border-b px-8 py-6">
             <div>
