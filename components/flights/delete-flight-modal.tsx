@@ -13,7 +13,7 @@ type Props = {
 
   onClose: () => void;
 
-  onDelete: (deletedId: number) => void;
+  onDelete: (id: number) => void;
 };
 
 export default function DeleteFlightModal({
@@ -22,33 +22,54 @@ export default function DeleteFlightModal({
   onClose,
   onDelete,
 }: Props) {
-  const [loading, setLoading] = useState(false);
+  // LOADING
+  const [loading, setLoading] =
+    useState(false);
 
+  // CLOSE IF EMPTY
   if (!open || !flight) return null;
 
+  // DELETE HANDLER
   async function handleDelete() {
     try {
+      // START LOADING
       setLoading(true);
 
-      const res = await fetch(`/api/flights/${flight.id}`, {
-        method: "DELETE",
-      });
+      // DELETE REQUEST
+      const res = await fetch(
+        `/api/flights/${flight.id}`,
+        {
+          method: "DELETE",
+        }
+      );
 
-      // fake loading animation
-      await new Promise((resolve) => setTimeout(resolve, 1200));
+      // FAKE LOADING ANIMATION
+      await new Promise((resolve) =>
+        setTimeout(resolve, 1200)
+      );
 
+      // ERROR
       if (!res.ok) {
-        throw new Error("Failed to delete flight");
+        throw new Error(
+          "Failed to delete flight"
+        );
       }
 
-      toast.success("Flight deleted successfully");
+      // SUCCESS
+      toast.success(
+        "Flight deleted successfully"
+      );
 
+      // CALLBACK
       onDelete(flight.id);
     } catch (error) {
       console.error(error);
 
-      toast.error("Failed to delete flight");
+      toast.error(
+        "Failed to delete flight"
+      );
     } finally {
+      // STOP LOADING
       setLoading(false);
     }
   }
@@ -60,14 +81,21 @@ export default function DeleteFlightModal({
         {/* HEADER */}
         <div className="flex items-start justify-between">
           <div>
-            <h1 className="text-3xl font-bold">Delete Flight</h1>
+            <h1 className="text-3xl font-bold">
+              Delete Flight
+            </h1>
 
-            <p className="mt-2 text-gray-500">This action cannot be undone.</p>
+            <p className="mt-2 text-gray-500">
+              This action cannot be
+              undone.
+            </p>
           </div>
 
+          {/* CLOSE BUTTON */}
           <button
+            disabled={loading}
             onClick={onClose}
-            className="flex h-12 w-12 items-center justify-center rounded-full border transition hover:bg-gray-100"
+            className="flex h-12 w-12 items-center justify-center rounded-full border transition hover:bg-gray-100 disabled:opacity-50"
           >
             <X className="h-5 w-5" />
           </button>
@@ -75,21 +103,30 @@ export default function DeleteFlightModal({
 
         {/* BODY */}
         <div className="mt-8 rounded-2xl border bg-red-50 p-5">
-          <p className="text-sm text-gray-500">Flight ID</p>
+          <p className="text-sm text-gray-500">
+            Flight ID
+          </p>
 
-          <p className="mt-2 text-xl font-bold">{flight.flight_id}</p>
+          <p className="mt-2 text-xl font-bold">
+            {flight.flight_id}
+          </p>
 
-          <p className="mt-4 text-sm text-gray-500">Mission</p>
+          <p className="mt-4 text-sm text-gray-500">
+            Mission
+          </p>
 
-          <p className="mt-2 font-semibold">{flight.mission_name}</p>
+          <p className="mt-2 font-semibold">
+            {flight.mission_name}
+          </p>
         </div>
 
         {/* ACTION */}
         <div className="mt-8 flex justify-end gap-3">
           {/* CANCEL */}
           <button
+            disabled={loading}
             onClick={onClose}
-            className="rounded-2xl border px-6 py-3 font-semibold transition hover:bg-gray-100"
+            className="rounded-2xl border px-6 py-3 font-semibold transition hover:bg-gray-100 disabled:opacity-50"
           >
             Cancel
           </button>
@@ -103,11 +140,13 @@ export default function DeleteFlightModal({
             {loading ? (
               <>
                 <Loader2 className="h-5 w-5 animate-spin" />
+
                 Deleting...
               </>
             ) : (
               <>
                 <Trash2 className="h-5 w-5" />
+
                 Delete Flight
               </>
             )}
