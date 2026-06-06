@@ -91,11 +91,17 @@ import { NextResponse } from "next/server";
 
 import Papa from "papaparse";
 
+// =====================================================
+// PARSE DATE
+// FORMAT:
+// 01-01-2026
+// =====================================================
+
 function parseDate(
   dateString: string
 ) {
   const [day, month, year] =
-    dateString.split("/");
+    dateString.split("-");
 
   return new Date(
     Number(year),
@@ -104,12 +110,18 @@ function parseDate(
   );
 }
 
+// =====================================================
+// PARSE DATETIME
+// FORMAT:
+// 01-01-2026 + 13:00
+// =====================================================
+
 function parseDateTime(
   dateString: string,
   timeString: string
 ) {
   const [day, month, year] =
-    dateString.split("/");
+    dateString.split("-");
 
   const [hour, minute] =
     timeString.split(":");
@@ -128,7 +140,10 @@ export async function POST(
   req: Request
 ) {
   try {
-    // FILE
+    // =====================================================
+    // GET FILE
+    // =====================================================
+
     const formData =
       await req.formData();
 
@@ -140,6 +155,7 @@ export async function POST(
       return NextResponse.json(
         {
           success: false,
+
           message:
             "No file uploaded",
         },
@@ -149,26 +165,36 @@ export async function POST(
       );
     }
 
+    // =====================================================
     // READ CSV
+    // =====================================================
+
     const text = await file.text();
 
+    // =====================================================
     // PARSE CSV
+    // =====================================================
+
     const parsed = Papa.parse(text, {
       header: true,
+
       skipEmptyLines: true,
     });
 
     const rows = parsed.data as any[];
 
-    console.log(rows);
-
+    // =====================================================
     // FORMAT DATA
+    // =====================================================
+
     const formattedData = rows.map(
       (item) => ({
+        // DATE
         flight_date: parseDate(
           item.flight_date
         ),
 
+        // TEXT
         ama: item.ama || "",
 
         estate:
@@ -191,6 +217,7 @@ export async function POST(
         battery_color:
           item.battery_color || "",
 
+        // NUMBER
         start_percent:
           Number(
             item.start_percent
@@ -209,6 +236,7 @@ export async function POST(
           Number(item.end_volt) ||
           0,
 
+        // DATETIME
         start_time:
           parseDateTime(
             item.flight_date,
@@ -221,24 +249,32 @@ export async function POST(
             item.end_time
           ),
 
+        // NUMBER
         duration_min:
           Number(
             item.duration_min
           ) || 0,
 
+        // NOTES
         notes: item.notes || "",
       })
     );
 
-    console.log(formattedData);
+    // =====================================================
+    // INSERT DATABASE
+    // =====================================================
 
-    // INSERT
     await prisma.flight.createMany({
       data: formattedData,
     });
 
+    // =====================================================
+    // RESPONSE
+    // =====================================================
+
     return NextResponse.json({
       success: true,
+
       message:
         "CSV uploaded successfully",
     });
@@ -248,6 +284,7 @@ export async function POST(
     return NextResponse.json(
       {
         success: false,
+
         message: "Upload failed",
       },
       {
