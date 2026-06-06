@@ -89,12 +89,46 @@ import { prisma } from "@/lib/prisma";
 
 import { NextResponse } from "next/server";
 
-export async function POST(req: Request) {
-  try {
-    // =====================================================
-    // GET FILE
-    // =====================================================
+import Papa from "papaparse";
 
+function parseDate(
+  dateString: string
+) {
+  const [day, month, year] =
+    dateString.split("/");
+
+  return new Date(
+    Number(year),
+    Number(month) - 1,
+    Number(day)
+  );
+}
+
+function parseDateTime(
+  dateString: string,
+  timeString: string
+) {
+  const [day, month, year] =
+    dateString.split("/");
+
+  const [hour, minute] =
+    timeString.split(":");
+
+  return new Date(
+    Number(year),
+    Number(month) - 1,
+    Number(day),
+    Number(hour),
+    Number(minute),
+    0
+  );
+}
+
+export async function POST(
+  req: Request
+) {
+  try {
+    // FILE
     const formData =
       await req.formData();
 
@@ -102,14 +136,12 @@ export async function POST(req: Request) {
       "file"
     ) as File;
 
-    // =====================================================
-    // VALIDATION
-    // =====================================================
-
     if (!file) {
       return NextResponse.json(
         {
-          message: "No file uploaded",
+          success: false,
+          message:
+            "No file uploaded",
         },
         {
           status: 400,
@@ -117,151 +149,96 @@ export async function POST(req: Request) {
       );
     }
 
-    // =====================================================
     // READ CSV
-    // =====================================================
-
     const text = await file.text();
 
-    const rows = text.split("\n");
-
-    // REMOVE HEADER
-    rows.shift();
-
-    // =====================================================
-    // HELPER
-    // =====================================================
-
-    function parseDate(
-      dateString: string
-    ) {
-      const [day, month, year] =
-        dateString.split("/");
-
-      return new Date(
-        Number(year),
-        Number(month) - 1,
-        Number(day)
-      );
-    }
-
-    function parseDateTime(
-      dateString: string,
-      timeString: string
-    ) {
-      const [day, month, year] =
-        dateString.split("/");
-
-      const [hour, minute] =
-        timeString.split(":");
-
-      return new Date(
-        Number(year),
-        Number(month) - 1,
-        Number(day),
-        Number(hour),
-        Number(minute),
-        0
-      );
-    }
-
-    // =====================================================
-    // PREPARE DATA
-    // =====================================================
-
-    const data = rows
-      .filter((row) => row.trim())
-      .map((row) => {
-        const cols = row
-          .split(",")
-          .map((col) => col.trim());
-
-        return {
-          // DATE
-          flight_date: cols[0]
-            ? parseDate(cols[0])
-            : new Date(),
-
-          // TEXT
-          ama: cols[1] || "",
-
-          estate: cols[2] || "",
-
-          pilot: cols[3] || "",
-
-          flight_id: cols[4] || "",
-
-          mission_name:
-            cols[5] || "",
-
-          battery_id:
-            cols[6] || "",
-
-          battery_id_2:
-            cols[7] || "",
-
-          battery_color:
-            cols[8] || "",
-
-          // NUMBER
-          start_percent: cols[9]
-            ? Number(cols[9])
-            : 0,
-
-          end_percent: cols[10]
-            ? Number(cols[10])
-            : 0,
-
-          start_volt: cols[11]
-            ? Number(cols[11])
-            : 0,
-
-          end_volt: cols[12]
-            ? Number(cols[12])
-            : 0,
-
-          // DATETIME
-          start_time:
-            cols[13] && cols[0]
-              ? parseDateTime(
-                  cols[0],
-                  cols[13]
-                )
-              : undefined,
-
-          end_time:
-            cols[14] && cols[0]
-              ? parseDateTime(
-                  cols[0],
-                  cols[14]
-                )
-              : undefined,
-
-          // DURATION
-          duration_min: cols[15]
-            ? Number(cols[15])
-            : 0,
-
-          // NOTES
-          notes: cols[16] || "",
-        };
-      });
-
-    // =====================================================
-    // INSERT MANY
-    // =====================================================
-
-    await prisma.flight.createMany({
-      data,
+    // PARSE CSV
+    const parsed = Papa.parse(text, {
+      header: true,
+      skipEmptyLines: true,
     });
 
-    // =====================================================
-    // RESPONSE
-    // =====================================================
+    const rows = parsed.data as any[];
+
+    console.log(rows);
+
+    // FORMAT DATA
+    const formattedData = rows.map(
+      (item) => ({
+        flight_date: parseDate(
+          item.flight_date
+        ),
+
+        ama: item.ama || "",
+
+        estate:
+          item.estate || "",
+
+        pilot: item.pilot || "",
+
+        flight_id:
+          item.flight_id || "",
+
+        mission_name:
+          item.mission_name || "",
+
+        battery_id:
+          item.battery_id || "",
+
+        battery_id_2:
+          item.battery_id_2 || "",
+
+        battery_color:
+          item.battery_color || "",
+
+        start_percent:
+          Number(
+            item.start_percent
+          ) || 0,
+
+        end_percent:
+          Number(
+            item.end_percent
+          ) || 0,
+
+        start_volt:
+          Number(item.start_volt) ||
+          0,
+
+        end_volt:
+          Number(item.end_volt) ||
+          0,
+
+        start_time:
+          parseDateTime(
+            item.flight_date,
+            item.start_time
+          ),
+
+        end_time:
+          parseDateTime(
+            item.flight_date,
+            item.end_time
+          ),
+
+        duration_min:
+          Number(
+            item.duration_min
+          ) || 0,
+
+        notes: item.notes || "",
+      })
+    );
+
+    console.log(formattedData);
+
+    // INSERT
+    await prisma.flight.createMany({
+      data: formattedData,
+    });
 
     return NextResponse.json({
       success: true,
-
       message:
         "CSV uploaded successfully",
     });
@@ -271,7 +248,6 @@ export async function POST(req: Request) {
     return NextResponse.json(
       {
         success: false,
-
         message: "Upload failed",
       },
       {
