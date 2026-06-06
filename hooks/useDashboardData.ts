@@ -23,9 +23,6 @@ export default function useDashboardData() {
 
         const statsData = await statsRes.json();
 
-        // fake loading biar smooth
-        await new Promise((resolve) => setTimeout(resolve, 300));
-
         setMissions(missionData);
 
         setStats(statsData);
