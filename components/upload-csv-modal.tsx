@@ -93,8 +93,8 @@ export default function UploadCSVModal({ open, onClose }: Props) {
       "40",
       "25.20",
       "22.10",
-      "2026-06-01 08:00:00",
-      "2026-06-01 08:40:00",
+      "13:00",
+      "14:00",
       "40",
       "Routine drone flight",
     ];
