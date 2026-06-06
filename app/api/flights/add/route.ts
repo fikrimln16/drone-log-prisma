@@ -158,7 +158,10 @@ import { prisma } from "@/lib/prisma";
 
 export async function POST(req: Request) {
   try {
+    // =====================================================
     // BODY
+    // =====================================================
+
     const body = await req.json();
 
     const {
@@ -232,12 +235,48 @@ export async function POST(req: Request) {
     }
 
     // =====================================================
+    // FORMAT DATETIME
+    // =====================================================
+
+    const startDateTime = new Date(
+      `${flight_date}T${start_time}:00`
+    );
+
+    const endDateTime = new Date(
+      `${flight_date}T${end_time}:00`
+    );
+
+    // =====================================================
+    // INVALID DATE CHECK
+    // =====================================================
+
+    if (
+      isNaN(startDateTime.getTime()) ||
+      isNaN(endDateTime.getTime())
+    ) {
+      return NextResponse.json(
+        {
+          success: false,
+
+          message:
+            "Format waktu tidak valid",
+        },
+        {
+          status: 400,
+        }
+      );
+    }
+
+    // =====================================================
     // CREATE
     // =====================================================
 
     const newFlight =
       await prisma.flight.create({
         data: {
+          // JANGAN KIRIM ID
+          // Prisma auto increment
+
           flight_date: new Date(
             flight_date
           ),
@@ -270,13 +309,9 @@ export async function POST(req: Request) {
           end_volt:
             Number(end_volt),
 
-          start_time: new Date(
-            `${flight_date}T${start_time}`
-          ),
+          start_time: startDateTime,
 
-          end_time: new Date(
-            `${flight_date}T${end_time}`
-          ),
+          end_time: endDateTime,
 
           duration_min:
             Number(duration_min),
@@ -297,8 +332,23 @@ export async function POST(req: Request) {
 
       data: newFlight,
     });
-  } catch (error) {
+  } catch (error: any) {
     console.error(error);
+
+    // UNIQUE ERROR
+    if (error.code === "P2002") {
+      return NextResponse.json(
+        {
+          success: false,
+
+          message:
+            "Data flight sudah ada",
+        },
+        {
+          status: 409,
+        }
+      );
+    }
 
     return NextResponse.json(
       {
