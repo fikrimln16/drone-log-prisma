@@ -129,6 +129,33 @@ export async function POST(req: Request) {
     rows.shift();
 
     // =====================================================
+    // HELPER
+    // =====================================================
+
+    function parseDate(
+      dateString: string
+    ) {
+      const [day, month, year] =
+        dateString.split("/");
+
+      return new Date(
+        `${year}-${month}-${day}`
+      );
+    }
+
+    function parseDateTime(
+      dateString: string,
+      timeString: string
+    ) {
+      const [day, month, year] =
+        dateString.split("/");
+
+      return new Date(
+        `${year}-${month}-${day}T${timeString}:00`
+      );
+    }
+
+    // =====================================================
     // PREPARE DATA
     // =====================================================
 
@@ -140,50 +167,73 @@ export async function POST(req: Request) {
           .map((col) => col.trim());
 
         return {
+          // DATE
           flight_date: cols[0]
-            ? new Date(cols[0])
+            ? parseDate(cols[0])
             : new Date(),
 
-          flight_id: cols[1] || "",
+          // TEXT
+          ama: cols[1] || "",
+
+          estate: cols[2] || "",
+
+          pilot: cols[3] || "",
+
+          flight_id: cols[4] || "",
 
           mission_name:
-            cols[2] || "",
+            cols[5] || "",
 
           battery_id:
-            cols[3] || "",
+            cols[6] || "",
+
+          battery_id_2:
+            cols[7] || "",
 
           battery_color:
-            cols[4] || "",
+            cols[8] || "",
 
-          start_percent: cols[5]
-            ? Number(cols[5])
+          // NUMBER
+          start_percent: cols[9]
+            ? Number(cols[9])
             : 0,
 
-          end_percent: cols[6]
-            ? Number(cols[6])
+          end_percent: cols[10]
+            ? Number(cols[10])
             : 0,
 
-          start_volt: cols[7]
-            ? Number(cols[7])
-            : 0,
-
-          end_volt: cols[8]
-            ? Number(cols[8])
-            : 0,
-
-          start_time: cols[9]
-            ? new Date(cols[9])
-            : undefined,
-
-          end_time: cols[10]
-            ? new Date(cols[10])
-            : undefined,
-
-          duration_min: cols[11]
+          start_volt: cols[11]
             ? Number(cols[11])
             : 0,
 
-          notes: cols[12] || "",
+          end_volt: cols[12]
+            ? Number(cols[12])
+            : 0,
+
+          // DATETIME
+          start_time:
+            cols[13] && cols[0]
+              ? parseDateTime(
+                  cols[0],
+                  cols[13]
+                )
+              : undefined,
+
+          end_time:
+            cols[14] && cols[0]
+              ? parseDateTime(
+                  cols[0],
+                  cols[14]
+                )
+              : undefined,
+
+          // DURATION
+          duration_min: cols[15]
+            ? Number(cols[15])
+            : 0,
+
+          // NOTES
+          notes: cols[16] || "",
         };
       });
 
@@ -200,6 +250,8 @@ export async function POST(req: Request) {
     // =====================================================
 
     return NextResponse.json({
+      success: true,
+
       message:
         "CSV uploaded successfully",
     });
@@ -208,6 +260,8 @@ export async function POST(req: Request) {
 
     return NextResponse.json(
       {
+        success: false,
+
         message: "Upload failed",
       },
       {
