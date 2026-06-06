@@ -139,7 +139,9 @@ export async function POST(req: Request) {
         dateString.split("/");
 
       return new Date(
-        `${year}-${month}-${day}`
+        Number(year),
+        Number(month) - 1,
+        Number(day)
       );
     }
 
@@ -150,8 +152,16 @@ export async function POST(req: Request) {
       const [day, month, year] =
         dateString.split("/");
 
+      const [hour, minute] =
+        timeString.split(":");
+
       return new Date(
-        `${year}-${month}-${day}T${timeString}:00`
+        Number(year),
+        Number(month) - 1,
+        Number(day),
+        Number(hour),
+        Number(minute),
+        0
       );
     }
 
